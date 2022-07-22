@@ -1,0 +1,67 @@
+.hero-background {
+    background: url('/public/images/landing.png');
+    /* background: url('/public/images/background.png'); */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100%;
+}
+
+.hero-container {
+    /* background: url('/public/images/landing.png'); */
+    /* background-position: center; */
+    display: flex;
+    flex-direction: column;
+    /* object-fit: fill; */
+    /* background-size: cover;
+    background-repeat: no-repeat; */
+}
+
+.hero-container > h1 {
+    color: white;
+    font-size: 100px;
+    margin-left: 100px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    margin-top: 100px;
+}
+
+.hero-container > p {
+    color: white;
+    font-size: 50px;
+    margin-left: 100px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+.description-box {
+    background-color: rgba(184, 236, 135, 0.5);
+    width: 300px;
+    height: 200px;
+    padding: 30px;
+    border-radius: 30px;
+    margin-top: 30px;;
+    margin-left: 100px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.textbox {
+    line-height: 1.3rem;
+    font-size: 18px;
+}
+
+.hero-btns {
+    margin-left: 50%;
+}
+
+@media screen and (max-width: 960px) {
+    .hero-container > h1 {
+        font-size: 80px;
+    }
+
+    .textbox {
+        font-size: 14px;
+    }
+}

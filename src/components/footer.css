@@ -1,0 +1,50 @@
+.footerContainer {
+    background-color: #ECEAEA;
+    padding: 4rem 0 2rem 0;
+    width: 100%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.footerBar {
+    background-color: rgb(198, 236, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* max-width: 1000px; */
+    /* margin: 40px auto 0 auto; */
+    margin-bottom: -30px;
+}
+
+.footerInfo {
+    display: flex;
+    flex-direction: row;
+    padding: 0 0 4rem 0;
+    margin-left: 50px;
+}
+
+.InfoItem {
+    margin-right: 40px;
+    max-width: 300px;
+    color: black;
+}
+
+.InfoItem > h1 {
+    font-size: 25px;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.InfoItem > p {
+    font-size: 15px;
+}
+
+.website-rights {
+    color: black;
+    margin: 10px;
+    font-size: 20px;
+}

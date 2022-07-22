@@ -1,0 +1,52 @@
+.backgroundContainer {
+    width: 100%;
+    height: 100vh;
+    background-color: #C6ECFF;
+    /* background-color: transparent; */
+}
+
+.backgroundBox {
+    background: #F6E1B9;
+    color: white;
+    width: 90%;
+    height: 600px;
+    /* height: 600px; */
+    border-radius: 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+.backgroundBox > h1 {
+    padding: 40px;
+    text-align: right;
+    font-size: 60px;
+    transition: all 0.5s ease;
+}
+
+.backgroundBox > p {
+    padding: 30px;
+    text-align: center;
+    font-size: 30px;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: -30px;
+}
+
+@media screen and (max-width: 960px) {
+    .backgroundBox {
+        height: auto;
+    }
+    .backgroundBox > h1 {
+        padding: 40px;
+        text-align: center;
+        font-size: 50px;
+    }
+    .backgroundBox > p {
+        padding: 10px;
+        text-align: center;
+        font-size: 18px;
+    }
+}
+
