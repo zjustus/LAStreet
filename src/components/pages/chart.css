@@ -1,0 +1,55 @@
+.container {
+    text-align: center;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    padding: 0.8rem;
+    background: #C6ECFF;
+    color: black;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    font-size: .7rem;
+    max-width: 120px;
+}
+
+.selected {
+    fill: yellow;
+    opacity: 1;
+}
+
+.brushed {
+    fill: #B8EC87;
+    opacity: 1;
+}
+
+.non_brushed {
+    fill: #D1D1D1;
+    opacity: 0.5;
+}
+
+.axis line{
+    stroke: #D1D1D1;
+}
+.axis path{
+    stroke: #D1D1D1;
+}
+.axis text{
+    fill: #D1D1D1;
+}  
+
+.label {
+    fill: #D1D1D1;
+}
+
+.resetButton {
+    background: #C6ECFF;
+    color: black;
+    border-radius: 20px;
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    padding: 0.2rem ;
+}

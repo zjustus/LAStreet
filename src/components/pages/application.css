@@ -1,3 +1,11 @@
+.charts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 100px;
+}
+
 .intro {
     display: flex;
     flex-direction: column;
@@ -9,4 +17,22 @@
     max-width: 60%;
     text-align: center;
     font-size: 60px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.setting {
+    width: 90px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: #D9D9D9;
+    margin-left: 30px;
+    margin-right: 30px;
 }

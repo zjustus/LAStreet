@@ -24,6 +24,14 @@
     transition: all 0.3s ease-out;
 }
 
+.btn--gray{
+    background-color: #D9D9D9;
+    color: white;
+    padding: 8px 20px;
+    border: 1px solid var(--primary);
+    transition: all 0.3s ease-out;
+}
+
 .btn--clear{
     background-color: transparent;
     color: white;
