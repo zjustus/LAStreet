@@ -3,6 +3,7 @@ import './application.css'
 import Navbar from '../navbar';
 import Chart from './chart';
 import { Button } from '../button';
+import Map from './map';
 
 function Application () {
     return (
@@ -20,6 +21,7 @@ function Application () {
             </div>
             <div className='charts'>
                 <Chart/>
+                <Map/>
             </div>
         </div>
     );

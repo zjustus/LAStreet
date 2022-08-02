@@ -76,7 +76,7 @@ function Chart() {
         d3.select('#container')
         .append('button')
         .attr('id', 'resetButton')
-        .text('Reset Graph')
+        .text('Reset Zoom')
         .on('click', function() {
             console.log('hello');
             d3.select('#container')

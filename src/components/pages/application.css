@@ -1,9 +1,11 @@
 .charts {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-around;
     margin-top: 40px;
     margin-bottom: 100px;
+
 }
 
 .intro {
