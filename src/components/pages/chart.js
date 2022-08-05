@@ -405,13 +405,16 @@ function Chart() {
             d3.select(this).call(brush.move, null);
 
             var d_brushed = [];
+            var coorArray = [];
             //THIS LINE
             d3.selectAll(".brushed").data()
             .filter(function(d) {
+                coorArray.push(d.OBJECTID);
                 d_brushed.push(d.ST_NAME);
-                d_brushed.push('PCI is ' + d.pci); //CHANGE what part of data to print
+                d_brushed.push('ID: ' + d.OBJECTID); //CHANGE what part of data to print
             });
             console.log(d_brushed);
+            console.log(coorArray);
 
             // console.log('inside: ' + selected_region + 'length: ' + selected_region.length);
             if (d_brushed.length > 0) {

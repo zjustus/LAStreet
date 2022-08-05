@@ -56,7 +56,7 @@ function Map () {
         // d3.json('/hillside_inventory_LA_centrality_full.geojson')
         d3.json('/lacounty.geojson')
         .then((data) => {
-            console.log(data);
+            // console.log(data);
             svg.append('g')
             .selectAll("path")
             .data(data.features)
@@ -77,31 +77,56 @@ function Map () {
                     .style("stroke", "lightgrey")
             });
         
+            var coorArray = [49744, 43006, 67662, 28918, 16501, 17982];
+            var geometryArray = [];
+            coorArray.forEach(function(i) {
+                const streetIDS = data.features.map(function(i) {
+                    return {'OBJECTID': i.properties.OBJECTID,
+                            'geometry':  i.geometry};
+                })
+                // console.log(streetIDS);
+                streetIDS.forEach(function(streetid) {
+                    if(streetid.OBJECTID == i){
+                        geometryArray.push(streetid.geometry);
+                    }
+                })
+            })
+            console.log(geometryArray); //FIX: you should probably add other fields here
+            svg.append('g')
+            .selectAll("path")
+            .data(geometryArray)
+            .join('path')
+            .attr("fill", "blue")
+            .style("stroke", "blue")
+            .style('r', 5)
+            .style('stroke-width', '15px') //FIX: when we zoom in, the red line should change size as zoom scale
+            .attr('d', geoGenerator)
+            .on('mouseover', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "#B8EC87")
+                    .style('stroke-width', '1px')
+            })
+            .on('mouseout', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "blue")
+                    .style('stroke-width', '15px')
+            });
+
         });
+
+
 
         var zoom = d3.zoom().filter(() => !d3.event.button)
                     .scaleExtent([0.8, 20]) //unzoom x0.5, zoom x20
                     .extent([[0, 0], [w, h]])
                     .on("zoom", function() {
-                        svg.select('g').attr('transform', d3.event.transform);
+                        svg.selectAll('g').attr('transform', d3.event.transform);
                     })
 
         var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
         svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
-
-
-                // //ZOOM FEATURE
-                // var zoom = d3.zoom().filter(() => !d3.event.button)
-                // .scaleExtent([0.5, 20]) //unzoom x0.5, zoom x20
-                // .extent([[0, 0], [w, h]])
-                // .on('zoom', svg.attr("transform", d3.event.transform));
-        
-                // // .call(d3.zoom().on("zoom", function () {
-                // //     svg.attr("transform", d3.event.transform)
-                // //  }))
-         
-                // var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
-                // svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
         
     }
 
