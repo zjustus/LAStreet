@@ -1,71 +1,172 @@
 import './chart.css';
 import {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
-
+import * as d3Slider from 'd3-simple-slider';
 
 function Chart() {
 
-    var data = [[90, 20, 'A'],
-        [20, 109, 'B'],
-        [66, 44, 'C'],
-        [53, 80, 'D'],
-        [24, 182, 'E'],
-        [3, 130, 'F'],
-        [99, 176, 'G'],
-        [54, 150, 'H'],
-        [10, 159, 'I'],
-        [18, 120, 'J'],
-        [37, 144, 'K'],
-        [62, 180, 'L'],
-        [45, 182, 'M'],
-        [80, 172, 'N'],
-        [20, 100, 'O'],
-        [56, 94, 'P'],
-        [43, 180, 'Q'],
-        [34, 182, 'R'],
-        [88, 172, 'S'],
-        [26, 130, 'T'],
-        [64, 144, 'U'],
-        [53, 111, 'V'],
-        [56, 138, 'W'],
-        [77, 174, 'X'],
-        [10, 161, 'I'],
-        [10, 164, 'S'],
-        [12, 163, 'J'],
-        [16, 162, 'F'],
-        [14, 120, 'J'],
-        [37, 144, 'K'],
-        [62, 180, 'L'],
-        [44, 161, 'I'],
-        [47, 161, 'S'],
-        [43, 165, 'J'],
-        [62, 180, 'B'],
-        [42, 159, 'J'],
-        [49, 152, 'I'],
-        [44, 149, 'E'],
-        [50, 162, 'F'],
-        [45, 175, 'M'],
-        [81, 174, 'A'],
-        [20, 100, 'O'],
-        [56, 94, 'P'],
-        [43, 179, 'W'],
-        [37, 181, 'C'],
-        [88, 143, 'E'],
-        [28, 132, 'Y'],
-        [64, 155, 'V']];
-    //sort data if you're making a line
-        data.sort(function(a, b) {
-            return a[0] - b[0];
-        });
-    
-    useEffect(() => {
-        // testZoom();
-        drawChart();
-    }, [data]);
-    
+    function getGeoData(url) {
+        return fetch(url)
+            .then(function(response) {
+                return response.json();
+            });
+    }
 
-    function drawChart() {
-        //wipe off old chart and reset button before plotting new chart with new data
+    getGeoData('/hillside_inventory_LA_centrality_full.geojson')
+    .then(function(data) {
+
+        data.features.forEach(function(feature) {
+            //width rating = actual width / designation width
+            var width_ratio = feature.properties['width_ratio'];
+            var width_rating;
+            if(width_ratio > 1)
+            {
+                width_rating = 1.0;
+            }
+            else if(width_ratio < 0.5)
+            {
+                width_rating = 0.1;
+            }
+            else
+            {
+                width_rating = 3.6 * (width_ratio - 0.5)**2 + 0.1;
+            }
+            //round to 4 decimal digits
+            width_rating = Math.round(width_rating * 1e4) / 1e4;
+            feature.properties['width_rating'] = width_rating;
+
+            //pci rating = pci ^ 2 / 100
+            var pci = feature.properties['pci'];
+            var pci_rating;
+            pci_rating = (pci / 100) ** 2;
+            pci_rating = Math.round(pci_rating * 1e4) / 1e4;
+            feature.properties['pci_rating'] = pci_rating;
+
+            //sidewalk rating = designated sidewalk points / section length
+            var sidewalk_ratio = feature.properties['sidewalk_ratio'];
+            var sidewalk_rating;
+            if(sidewalk_ratio > 0.19)
+            {
+                sidewalk_rating = 1;
+            }
+            else if(sidewalk_ratio < 0)
+            {
+                sidewalk_rating = 0.1;
+            }
+            else
+            {
+                sidewalk_rating = 24.931 * sidewalk_ratio ** 2 + 0.1;
+            }
+            sidewalk_rating = Math.round(sidewalk_rating * 1e4) / 1e4;
+            feature.properties['sidewalk_rating'] = sidewalk_rating;
+
+            //curb rating = designated curb points / section length
+            var curb_ratio = feature.properties['curb_ratio'];
+            var curb_rating;
+            if(curb_ratio > 0.25)
+            {
+                curb_rating = 1;
+            }
+            else if(curb_ratio < 0)
+            {
+                curb_rating = 0.1;
+            }
+            else
+            {
+                curb_rating = 14.4 * curb_ratio ** 2 + 0.1;
+            }
+            curb_rating = Math.round(curb_rating * 1e4) / 1e4;
+            feature.properties['curb_rating'] = curb_rating;
+        });
+
+        var updatedGeoData = data.features;
+        var newGeoData = []; //holds a list of each street's properties
+        updatedGeoData.forEach(function(street){
+            newGeoData.push(street['properties']);
+        })
+
+        //Condition weights default
+        var widthRW = 0.33;
+        var pciRW = 0.33;
+        var curbRW = 0.26;
+        var sidewalkRW = 0.07;
+
+        //Importance weights default
+        var distanceW = 0.25;
+        var populationW = 0.25;
+        var timeW = 0.25;
+        var widthW = 0.25;
+
+        //sliders
+        //npm install d3-simple-slider
+        d3.select('#sliderContainer')
+        .select('svg')
+        .remove();
+        d3.select('#sliderValues')
+        .select('g')
+        .remove();
+
+        var slider = d3Slider.sliderBottom()
+                            .min(0)
+                            .max(1)
+                            .width(180)
+                            .ticks(5)
+                            // .step(0.1) //remove this if you dont want steps
+                            .default(0.33)
+                            .on('onchange', function(val) {
+                                sliderValue.text(d3.format('.2')(val));
+                                // widthSlider(val);
+                                // widthRW = this.value();
+                                // console.log('widthRW is: ' + widthRW);
+                            });
+
+        var sliderValue = d3.select('#sliderValues')
+                            .append('g')
+                            .append('text')
+
+        //display default
+        // sliderValue.text(d3.format('.2')(slider.value()));
+
+        // CHANGE: COME BACK AND FINISH THIS YOURE SO CLOSE
+        // function widthSlider(input) {
+        //     widthRW = input;
+        //     newGeoData.forEach(function(i) {
+        //         i['widthRW'] = widthRW;
+        //     })
+        //     console.log(newGeoData);
+        // }
+
+        d3.select('#sliderContainer')
+            .append('svg')
+            .attr('width', 500)
+            .attr('height', 80)
+            .append('g')
+            .attr('transform', 'translate(30,30)')
+            .call(slider);
+
+
+        //insert importance and condition values in data
+        newGeoData.forEach(function(i) {
+            //Condition
+            const RW = i['width_rating'];
+            const RP = i['pci_rating'];
+            const RC = i['curb_rating'];
+            const RS = i['sidewalk_rating'];
+            const condition = RW * widthRW + RP * pciRW + RC * curbRW + RS * sidewalkRW;
+            i['condition'] = condition;
+            //Importance
+            const CD = i['centrality_distance'];
+            const CT = i['centrality_time'];
+            const CW = i['centrality_width'];
+            const CP = i['centrality_population'];
+            const importance = CD * distanceW + CT * timeW + CW * widthW + CP * populationW;
+            i['importance'] = importance;
+        })
+        console.log(newGeoData);  
+        
+        
+        //draw chart
+        //wipe off old chart before plotting new chart with new data
         d3.select('#container')
         .select('svg')
         .remove();
@@ -78,7 +179,6 @@ function Chart() {
         .attr('id', 'resetButton')
         .text('Reset Zoom')
         .on('click', function() {
-            console.log('hello');
             d3.select('#container')
             .select('svg')
             .call(zoom.transform, d3.zoomIdentity.scale(1));
@@ -87,8 +187,8 @@ function Chart() {
         //responsive graph (fix refreshing to resize issue)
         const margin = {top: 20, right: 20, bottom: 30, left: 40};
 
-        var default_w = 700 - margin.left - margin.right;
-        var default_h = 500 - margin.top - margin.bottom;
+        var default_w = 750 - margin.left - margin.right;
+        var default_h = 550 - margin.top - margin.bottom;
         var default_ratio = default_w / default_h;
 
         var current_w = window.innerWidth;
@@ -112,74 +212,56 @@ function Chart() {
         var h = height - margin.top - margin.bottom;
 
 
-        
-
         var svg = d3.select('#container')
-            .append('svg')
-            .attr('width', w)
-            .attr('height', h)
-            .attr('overflow', 'visible')
-            .attr('margin-top', '100px')
-            .attr('style', 'outline: thin solid lightgrey'); //border
+                .append('svg')
+                .attr('width', w)
+                .attr('height', h)
+                .attr('overflow', 'visible')
+                .attr('margin-top', '100px')
+                .attr('style', 'outline: thin solid lightgrey'); //border
+    
         //set up scaling
         var xScale = d3.scaleLinear()
-            .domain([0, 100])
-            .range([0, w]);
-        var yScale = d3.scaleLinear()
-            .domain([0, 200])
-            .range([h, 0]);
+        .domain([0, 1.0]) //CHANGE range of x axis
+        .range([0, w]);
+        var yScale = d3.scaleLog() //CHANGE based on data
+        .domain([1e-10, 1]) //CHANGE range of y axis
+        .range([h, 0]);
 
-        // //line
-        // const line = d3.line()
-        // .x(d => xScale(d[0]))
-        // .y(d => yScale(d[1]))
-        // .curve(d3.curveMonotoneX);
-        
         //set up axis
-        // var xAxis = d3.axisBottom(xScale).ticks(data.length);
-        // var yAxis = d3.axisLeft(yScale).ticks(10); //d3 rounds sometimes
         var xAxis = svg.append('g')
                     .attr('transform',`translate(0, ${h})`)
                     .attr('class', 'axis')
-                    .call(d3.axisBottom(xScale).ticks(15));
-                    // .call(d3.axisBottom(xScale).ticks(data.length));
+                    .call(d3.axisBottom(xScale).ticks(5)); //CHANGE ticks frequency
 
         var yAxis = svg.append('g')
                     .attr('class', 'axis')
-                    .call(d3.axisLeft(yScale).ticks(10));
-        //path
-        // svg.append('path')
-        // .datum(data)
-        // .attr('fill', 'none')
-        // .attr('stroke', 'black')
-        // .attr('stroke-width', 1)
-        // .attr('class', 'line')
-        // .attr('d', line);
+                    .call(d3.axisLeft(yScale).ticks(5)); //CHANGE ticks frequency
 
         // set up axis labeling
         svg.append('text')
-            .attr('class', 'label')
-            .attr('x', w/2 - 30)
-            .attr('y', h + 50)
-            .text('Condition');
+        .attr('class', 'label')
+        .attr('x', w/2 - 30)
+        .attr('y', h + 50)
+        .text('Condition'); //CHANGE labeling
         svg.append('text')
-            .attr('class', 'label')
-            .attr('y', h/2)
-            .attr('x', -120)
-            .text('Importance');
+        .attr('class', 'label')
+        .attr('y', h/2)
+        .attr('x', -120)
+        .text('Importance'); //CHANGE labeling
 
         // Add a clipPath: everything out of this area won't be drawn.
         var clip = svg.append("defs").append("svg:clipPath")
-            .attr("id", "clip")
-            .append("svg:rect")
-            .attr("width", w )
-            .attr("height", h )
-            .attr("x", 0)
-            .attr("y", 0);
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("width", w )
+        .attr("height", h )
+        .attr("x", 0)
+        .attr("y", 0);
 
         // Create the scatter variable: where both the circles and the brush take place
         var scatter = svg.append('g')
-            .attr("clip-path", "url(#clip)");
+        .attr("clip-path", "url(#clip)");
 
         //tooltip
         var tooltip = d3.select('#container').append('div')
@@ -188,45 +270,42 @@ function Chart() {
 
         //set up svg data
         var myScatter = scatter.selectAll()
-        .data(data)
+        .data(newGeoData)
         .enter()
         .append('circle')
-            .attr('cx', d => xScale(d[0]))
-            .attr('cy', d => yScale(d[1]))
-            .attr('r', 6)
-            // .attr("stroke", "#32CD32")
-            // .attr("stroke-width", 1.5)
-            .attr("fill", "blue")
-            .attr('class', 'non_brushed'); //delete to go back to previous version
-
-        function initToolTip () {
-            //expand points upon hover
-            myScatter
-            .on('mouseover', function (d, i) {
-                d3.select(this).transition()
-                     .duration('100')
-                     .attr("r", 7)
-                     .attr("stroke", "#32CD32")
-                     .attr("stroke-width", 1.5);
-                //make div appear
-                tooltip.transition()
-                    .duration(100)
-                    .style('opacity', 1);
-                tooltip.html("Condition: " + d[0] + " " + "Importance: " + d[1])
-                    .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
-                    .style("top", (d3.event.pageY - 15) + "px");
-           })
-           .on('mouseout', function (d, i) {
-                d3.select(this).transition()
-                     .duration('200')
-                     .attr("r", 5)
-                     .attr("stroke", "none");
-                //make div disappear
-                tooltip.transition()
+        .attr('cx', function(d) {
+            return xScale(d.condition); //CHANGE x axis data
+        })
+        .attr('cy', function(d) {
+            return yScale(d.importance);//CHANGE y axis data
+        })
+        .attr('r', 6)
+        .attr('class', 'non_brushed')
+        //expand points upon hover
+        .on('mouseover', function (d, i) {
+            d3.select(this).transition()
+                .duration('100')
+                .attr("r", 7);
+            //make div appear
+            tooltip.transition()
+                .duration(100)
+                .style('opacity', 1);
+            //CHANGE tooltip fields
+            tooltip.html("Street Name: " + d.ST_NAME + " " +
+                        "Condition: " + Math.round(d.condition * 1e4) / 1e4 + " " + 
+                        "Importance: " + Math.round(d.importance * 1e4) / 1e4)
+                .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
+                .style("top", (d3.event.pageY - 15) + "px");
+        })
+        .on('mouseout', function (d, i) {
+            d3.select(this).transition()
                     .duration('200')
-                    .style('opacity', 0);
-           });
-        }
+                    .attr("r", 5);
+            //make div disappear
+            tooltip.transition()
+                .duration('200')
+                .style('opacity', 0);
+        });
 
         //BRUSH FEATURE VERSION 2
         function highlightBrushedCircles() {
@@ -237,11 +316,11 @@ function Chart() {
 
                 // style brushed circles
                 myScatter.filter(function (){
-                           var cx = d3.select(this).attr("cx"),
-                               cy = d3.select(this).attr("cy");
-                           return isBrushed(brush_coords, cx, cy);
-                       })
-                       .attr("class", "brushed");
+                            var cx = d3.select(this).attr("cx"),
+                                cy = d3.select(this).attr("cy");
+                            return isBrushed(brush_coords, cx, cy);
+                        })
+                        .attr("class", "brushed");
             }
         }
 
@@ -260,7 +339,7 @@ function Chart() {
                 return false;
             }
         }
-        
+
         var selected_region = [];
 
         function displayTable() {
@@ -270,10 +349,16 @@ function Chart() {
             // this makes the brush box go away after selection
             d3.select(this).call(brush.move, null);
 
+            var d_brushed = [];
             //THIS LINE
-            var d_brushed =  d3.selectAll(".brushed").data();
+            d3.selectAll(".brushed").data()
+            .filter(function(d) {
+                d_brushed.push(d.ST_NAME);
+                d_brushed.push('PCI is ' + d.pci); //CHANGE what part of data to print
+            });
+            console.log(d_brushed);
 
-            // populate table if one or more elements is brushed
+            // console.log('inside: ' + selected_region + 'length: ' + selected_region.length);
             if (d_brushed.length > 0) {
                 //clear all displayed selected dots
                 selected_region = [];
@@ -282,10 +367,9 @@ function Chart() {
                 d3.select('#selected_regions_title').select('text').remove();
                 d3.select('#selected_regions_title')
                 .append('text')
-                .style('fill', 'lightgrey')
                 .attr('x', 600)
                 .attr('y', h - 80)
-                .html(selected_region.join(','));
+                .html(selected_region.join(', '));
             } else {
                 //clear all displayed selected dots
                 selected_region = [];
@@ -293,24 +377,25 @@ function Chart() {
             }
             // d3.select('#selected_regions_title').append('text').html(selected_region.join(', '));
         }
+
         var brush = d3.brush()
         .on("brush", highlightBrushedCircles)
         .on("end", displayTable); 
 
         svg.append("g")
         .call(brush);
-        
 
         function makeSelectedSection() {
-            const section = d3.select('svg')
-              .append('g')
-              .attr('id', 'selected_regions_title')
-              .append('text')
-              .style('fill', 'lightgrey')
-              .attr('x', 600)
-              .attr('y', h - 100)
-              .html('Brush to select:');
-          }
+            const section = d3.select('#container')
+                .select('svg')
+                .append('g')
+                .attr('id', 'selected_regions_title')
+                .append('text')
+                .style('fill', 'lightgrey')
+                .attr('x', 600)
+                .attr('y', h - 100)
+                .html('Brush to select:');
+        }
 
         makeSelectedSection();
 
@@ -320,18 +405,20 @@ function Chart() {
         .extent([[0, 0], [w, h]])
         .on('zoom', handleZoom);
 
-        //invisible rect
+
+        // invisible rect
+        // you can only zoom and pan inside this rectangle
+        // FIX: but this takes away the tool tip
         // svg.append('rect')
-        //     .attr('width', w)
-        //     .attr('height', h)
-        //     .style('fill', 'none')
-        //     .style('pointer-events', 'all')
-        //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-        var svgZoom = d3.select('svg').call(zoom);  //initiate zoom
+        // .attr('width', w)
+        // .attr('height', h)
+        // .style('fill', 'none')
+        // .style('pointer-events', 'all')
+        // .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+        // .call(zoom);
+ 
+        var svgZoom = d3.select('#container').select('svg').call(zoom);  //initiate zoom
         svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
-
-
 
         function handleZoom() {
             var xScaleNew = d3.event.transform.rescaleX(xScale);
@@ -341,19 +428,23 @@ function Chart() {
             yAxis.call(d3.axisLeft(yScaleNew));
             
             scatter.selectAll('circle')
-                    .attr('cx', function(d) {return xScaleNew(d[0])})
-                    .attr('cy', function(d) {return yScaleNew(d[1])});
+                    .attr('cx', function(d) {return xScaleNew(d.condition)}) //CHANGE BASED ON XAXIS
+                    .attr('cy', function(d) {return yScaleNew(d.importance)}); //CHANGE BASED ON YAXIS
         }
-        
-        initToolTip();
-    }
-    //     //draw grid lines if you want
+
+    })
+
+
+    
+    //draw grid lines if you want
 
     return (
-        <div className='containerContainer'>
-            {/* <button onClick={test}>RESET</button> */}
+        <div bigContainer>
+            <div id='sliderFamily'>
+                <div id='sliderContainer'/>
+                <div id='sliderValues'/>
+            </div>
             <div id='container'>
-                <div id='table'/>
             </div>
         </div>
     );

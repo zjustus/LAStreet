@@ -12,7 +12,7 @@ div.tooltip {
     border-radius: 8px;
     pointer-events: none;
     font-size: .7rem;
-    max-width: 120px;
+    max-width: 130px;
 }
 
 .selected {
