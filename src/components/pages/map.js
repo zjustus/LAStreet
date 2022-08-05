@@ -13,6 +13,20 @@ function Map () {
         d3.select('#mapContainer')
         .select('svg')
         .remove();
+        d3.select('#mapContainer')
+        .select('button')
+        .remove();
+
+        d3.select('#mapContainer')
+        .append('button')
+        .attr('id', 'resetButton')
+        .text('Reset Zoom')
+        .on('click', function() {
+            d3.select('#mapContainer')
+            .select('svg')
+            //maybe here
+            .call(zoom.transform, d3.zoomIdentity.scale(1));
+        });
 
         var w = 400;
         var h = 500;
@@ -22,6 +36,15 @@ function Map () {
                 .attr('width', w)
                 .attr('height', h)
                 .attr('style', 'outline: thin solid lightgrey')
+
+        // Add a clipPath: everything out of this area won't be drawn.
+        var clip = svg.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("width", w )
+        .attr("height", h )
+        .attr("x", 0)
+        .attr("y", 0);
 
         var projection = d3.geoEquirectangular()
         .scale(w * 100)
@@ -40,8 +63,33 @@ function Map () {
             .join('path')
             .attr("fill", "lightgrey")
             .style("stroke", "lightgrey")
-            .attr('d', geoGenerator);
+            .attr('d', geoGenerator)
         });
+
+        var zoom = d3.zoom().filter(() => !d3.event.button)
+                    .scaleExtent([0.8, 20]) //unzoom x0.5, zoom x20
+                    .extent([[0, 0], [w, h]])
+                    .on("zoom", function() {
+                        svg.select('g').attr('transform', d3.event.transform);
+                    })
+
+        var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
+        svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
+
+
+                // //ZOOM FEATURE
+                // var zoom = d3.zoom().filter(() => !d3.event.button)
+                // .scaleExtent([0.5, 20]) //unzoom x0.5, zoom x20
+                // .extent([[0, 0], [w, h]])
+                // .on('zoom', svg.attr("transform", d3.event.transform));
+        
+                // // .call(d3.zoom().on("zoom", function () {
+                // //     svg.attr("transform", d3.event.transform)
+                // //  }))
+         
+                // var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
+                // svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
+        
     }
 
     return (

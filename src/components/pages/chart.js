@@ -99,30 +99,62 @@ function Chart() {
 
         //sliders
         //npm install d3-simple-slider
-        d3.select('#sliderContainer')
+        d3.select('#sliderContainer1')
+        .select('svg')
+        .remove();
+        d3.select('#sliderContainer2')
+        .select('svg')
+        .remove();
+        d3.select('#sliderContainer3')
+        .select('svg')
+        .remove();
+        d3.select('#sliderContainer4')
         .select('svg')
         .remove();
         d3.select('#sliderValues')
         .select('g')
         .remove();
 
-        var slider = d3Slider.sliderBottom()
-                            .min(0)
-                            .max(1)
-                            .width(180)
-                            .ticks(5)
-                            // .step(0.1) //remove this if you dont want steps
-                            .default(0.33)
-                            .on('onchange', function(val) {
-                                sliderValue.text(d3.format('.2')(val));
-                                // widthSlider(val);
-                                // widthRW = this.value();
-                                // console.log('widthRW is: ' + widthRW);
-                            });
+        var slider1 = d3Slider.sliderBottom()
+                    .min(0).max(1).width(150).ticks(5).default(0.33)
+                 // .step(0.1) //remove this if you dont want steps
+                    .on('onchange', function(val) {
+                        sliderValue1.text(d3.format('.2')(val));
+                        // widthSlider(val);
+                        // widthRW = this.value();
+                        // console.log('widthRW is: ' + widthRW);
+                    });
 
-        var sliderValue = d3.select('#sliderValues')
+        var slider2 = d3Slider.sliderBottom()
+                    .min(0).max(1).width(150).ticks(5).default(0.33)
+                    .on('onchange', function(val) {
+                        sliderValue2.text(d3.format('.2')(val));
+                    });
+
+        var slider3 = d3Slider.sliderBottom()
+        .min(0).max(1).width(150).ticks(5).default(0.26)
+        .on('onchange', function(val) {
+            sliderValue3.text(d3.format('.2')(val));
+        });
+        
+        var slider4 = d3Slider.sliderBottom()
+        .min(0).max(1).width(150).ticks(5).default(0.07)
+        .on('onchange', function(val) {
+            sliderValue4.text(d3.format('.2')(val));
+        });   
+
+        var sliderValue1 = d3.select('#sliderValueOne')
                             .append('g')
-                            .append('text')
+                            .append('text');
+        var sliderValue2 = d3.select('#sliderValueTwo')
+                            .append('g')
+                            .append('text');
+        var sliderValue3 = d3.select('#sliderValueThree')
+                            .append('g')
+                            .append('text');
+        var sliderValue4 = d3.select('#sliderValueFour')
+                            .append('g')
+                            .append('text');
 
         //display default
         // sliderValue.text(d3.format('.2')(slider.value()));
@@ -136,14 +168,38 @@ function Chart() {
         //     console.log(newGeoData);
         // }
 
-        d3.select('#sliderContainer')
+        var sliderContainer1 = d3.select('#sliderContainer1')
             .append('svg')
-            .attr('width', 500)
+            .attr('width', 200)
             .attr('height', 80)
             .append('g')
-            .attr('transform', 'translate(30,30)')
-            .call(slider);
+            .attr('transform', 'translate(30,30)');
 
+        var sliderContainer2 = d3.select('#sliderContainer2')
+            .append('svg')
+            .attr('width', 200)
+            .attr('height', 80)
+            .append('g')
+            .attr('transform', 'translate(30,30)');
+
+        var sliderContainer3 = d3.select('#sliderContainer3')
+        .append('svg')
+        .attr('width', 200)
+        .attr('height', 80)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+        var sliderContainer4 = d3.select('#sliderContainer4')
+        .append('svg')
+        .attr('width', 200)
+        .attr('height', 80)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+        sliderContainer1.call(slider1);
+        sliderContainer2.call(slider2);
+        sliderContainer3.call(slider3);
+        sliderContainer4.call(slider4);
 
         //insert importance and condition values in data
         newGeoData.forEach(function(i) {
@@ -217,7 +273,6 @@ function Chart() {
                 .attr('width', w)
                 .attr('height', h)
                 .attr('overflow', 'visible')
-                .attr('margin-top', '100px')
                 .attr('style', 'outline: thin solid lightgrey'); //border
     
         //set up scaling
@@ -367,8 +422,8 @@ function Chart() {
                 d3.select('#selected_regions_title').select('text').remove();
                 d3.select('#selected_regions_title')
                 .append('text')
-                .attr('x', 600)
-                .attr('y', h - 80)
+                .attr('x', 0)
+                .attr('y', h + 80)
                 .html(selected_region.join(', '));
             } else {
                 //clear all displayed selected dots
@@ -392,8 +447,8 @@ function Chart() {
                 .attr('id', 'selected_regions_title')
                 .append('text')
                 .style('fill', 'lightgrey')
-                .attr('x', 600)
-                .attr('y', h - 100)
+                .attr('x', 0)
+                .attr('y', h + 80)
                 .html('Brush to select:');
         }
 
@@ -441,8 +496,18 @@ function Chart() {
     return (
         <div bigContainer>
             <div id='sliderFamily'>
-                <div id='sliderContainer'/>
-                <div id='sliderValues'/>
+                <div id='sliderContainer1'>
+                    <div id='sliderValueOne'/>
+                </div>
+                <div id='sliderContainer2'>
+                    <div id='sliderValueTwo'/>
+                </div>
+                <div id='sliderContainer3'>
+                    <div id='sliderValueThree'/>
+                </div>
+                <div id='sliderContainer4'>
+                    <div id='sliderValueFour'/>
+                </div>
             </div>
             <div id='container'>
             </div>

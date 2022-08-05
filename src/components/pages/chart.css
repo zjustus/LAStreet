@@ -44,12 +44,35 @@ div.tooltip {
     fill: #D1D1D1;
 }
 
-.resetButton {
+#resetButton {
     background: #C6ECFF;
     color: black;
     border-radius: 20px;
-    width: 100px;
+    border-color: white;
+    width: 80px;
     height: 30px;
+    font-size:x-small;
     text-align: center;
     padding: 0.2rem ;
+    margin-right: 10px;
+}
+
+#sliderFamily {
+    display: flex;
+    flex-direction: row;
+    /* background-color: black; */
+    width: 800px;
+    height: 100px;
+    margin-left: -20px;
+}
+
+#sliderContainer1, 
+#sliderContainer2, 
+#sliderContainer3,
+#sliderContainer4 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: small;
 }
