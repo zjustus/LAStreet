@@ -63,7 +63,20 @@ function Map () {
             .join('path')
             .attr("fill", "lightgrey")
             .style("stroke", "lightgrey")
+            .style('stroke-width', '0.2px')
             .attr('d', geoGenerator)
+            .on('mouseover', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "#C6ECFF")
+                    .style('stroke-width', '0.5px')
+            })
+            .on('mouseout', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "lightgrey")
+            });
+        
         });
 
         var zoom = d3.zoom().filter(() => !d3.event.button)
