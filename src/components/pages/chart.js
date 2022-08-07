@@ -277,7 +277,7 @@ function Chart() {
     
         //set up scaling
         var xScale = d3.scaleLinear()
-        .domain([0, 1.0]) //CHANGE range of x axis
+        .domain([0, 1]) //CHANGE range of x axis
         .range([0, w]);
         var yScale = d3.scaleLog() //CHANGE based on data
         .domain([1e-10, 1]) //CHANGE range of y axis
@@ -362,7 +362,7 @@ function Chart() {
                 .style('opacity', 0);
         });
 
-        //BRUSH FEATURE VERSION 2
+        //BRUSH FEATURE
         function highlightBrushedCircles() {
             if (d3.event.selection != null) {
                 // revert circles to initial style
@@ -395,9 +395,12 @@ function Chart() {
             }
         }
 
-        var selected_region = [];
 
         function displayTable() {
+
+            var selected_region = [];
+            var brushed_streets = [];
+
             // disregard brushes w/o selections  
             if (!d3.event.selection) return;
 
@@ -414,9 +417,69 @@ function Chart() {
                 d_brushed.push('ID: ' + d.OBJECTID); //CHANGE what part of data to print
             });
             console.log(d_brushed);
-            console.log(coorArray);
 
-            // console.log('inside: ' + selected_region + 'length: ' + selected_region.length);
+            var geometryArray = [];
+            coorArray.forEach(function(i) {
+                const streetIDS = data.features.map(function(i) {
+                    return {'OBJECTID': i.properties.OBJECTID,
+                            'geometry':  i.geometry};
+                })
+                streetIDS.forEach(function(streetid) {
+                    if(streetid.OBJECTID === i){
+                        geometryArray.push(streetid.geometry);
+                    }
+                })
+            })
+
+            var mapW = 400;
+            var mapH = 500;
+            var projection = d3.geoEquirectangular()
+            .scale(mapW * 100)
+            .center([-118.4, 34.03])
+            .translate([mapW/2, mapH/2]);
+            var geoGenerator = d3.geoPath().projection(projection);
+
+            if (geometryArray.length > 0) {
+                //clear all selected streets in map
+                brushed_streets = [];
+                //for each brushed street, display in map
+                geometryArray.forEach(i => brushed_streets.push(i));
+                //clear out previous selected streets
+                d3.select('#mapContainer').select('[id="selected_streets"]')
+                .remove();
+
+                d3.select('#mapContainer')
+                .select('svg')
+                .append('g')
+                .attr('id', 'selected_streets')
+                .selectAll("path")
+                .data(brushed_streets)
+                .join('path')
+                .attr("fill", "blue")
+                .style("stroke", "blue")
+                .style('r', 5)
+                .style('stroke-width', '15px') //FIX: when we zoom in, the red line should change size as zoom scale
+                .attr('d', geoGenerator)
+                .on('mouseover', function (d, i) {
+                    d3.select(this).transition()
+                        .duration('100')
+                        .style("stroke", "#B8EC87")
+                        .style('stroke-width', '1px')
+                })
+                .on('mouseout', function (d, i) {
+                    d3.select(this).transition()
+                        .duration('100')
+                        .style("stroke", "blue")
+                        .style('stroke-width', '15px')
+                });
+            } else {
+                //clear all selected streets in map
+                brushed_streets = [];
+                d3.select('#mapContainer')
+                .select('[id="selected_streets"]')
+                .remove();
+            }
+
             if (d_brushed.length > 0) {
                 //clear all displayed selected dots
                 selected_region = [];
@@ -433,7 +496,6 @@ function Chart() {
                 selected_region = [];
                 d3.select('#selected_regions_title').select('text').remove();
             }
-            // d3.select('#selected_regions_title').append('text').html(selected_region.join(', '));
         }
 
         var brush = d3.brush()
@@ -497,7 +559,7 @@ function Chart() {
     //draw grid lines if you want
 
     return (
-        <div bigContainer>
+        <div id='bigcontainer'>
             <div id='sliderFamily'>
                 <div id='sliderContainer1'>
                     <div id='sliderValueOne'/>
@@ -519,6 +581,11 @@ function Chart() {
 
 }
 
+function lol() {
+    console.log('tehe');
+    return 3;
+}
 
 
-export default Chart;
+
+export default {Chart, lol};

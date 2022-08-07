@@ -1,6 +1,7 @@
 import './map.css';
 import {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
+import chart from './chart';
 
 function Map () {
 
@@ -77,42 +78,42 @@ function Map () {
                     .style("stroke", "lightgrey")
             });
         
-            var coorArray = [49744, 43006, 67662, 28918, 16501, 17982];
-            var geometryArray = [];
-            coorArray.forEach(function(i) {
-                const streetIDS = data.features.map(function(i) {
-                    return {'OBJECTID': i.properties.OBJECTID,
-                            'geometry':  i.geometry};
-                })
-                // console.log(streetIDS);
-                streetIDS.forEach(function(streetid) {
-                    if(streetid.OBJECTID == i){
-                        geometryArray.push(streetid.geometry);
-                    }
-                })
-            })
-            console.log(geometryArray); //FIX: you should probably add other fields here
-            svg.append('g')
-            .selectAll("path")
-            .data(geometryArray)
-            .join('path')
-            .attr("fill", "blue")
-            .style("stroke", "blue")
-            .style('r', 5)
-            .style('stroke-width', '15px') //FIX: when we zoom in, the red line should change size as zoom scale
-            .attr('d', geoGenerator)
-            .on('mouseover', function (d, i) {
-                d3.select(this).transition()
-                    .duration('100')
-                    .style("stroke", "#B8EC87")
-                    .style('stroke-width', '1px')
-            })
-            .on('mouseout', function (d, i) {
-                d3.select(this).transition()
-                    .duration('100')
-                    .style("stroke", "blue")
-                    .style('stroke-width', '15px')
-            });
+            // var coorArray = [49744, 43006, 67662];
+            // var geometryArray = [];
+            // coorArray.forEach(function(i) {
+            //     const streetIDS = data.features.map(function(i) {
+            //         return {'OBJECTID': i.properties.OBJECTID,
+            //                 'geometry':  i.geometry};
+            //     })
+            //     // console.log(streetIDS);
+            //     streetIDS.forEach(function(streetid) {
+            //         if(streetid.OBJECTID === i){
+            //             geometryArray.push(streetid.geometry);
+            //         }
+            //     })
+            // })
+            // console.log(geometryArray); //FIX: you should probably add other fields here
+            // svg.append('g')
+            // .selectAll("path")
+            // .data(geometryArray)
+            // .join('path')
+            // .attr("fill", "blue")
+            // .style("stroke", "blue")
+            // .style('r', 5)
+            // .style('stroke-width', '15px') //FIX: when we zoom in, the red line should change size as zoom scale
+            // .attr('d', geoGenerator)
+            // .on('mouseover', function (d, i) {
+            //     d3.select(this).transition()
+            //         .duration('100')
+            //         .style("stroke", "#B8EC87")
+            //         .style('stroke-width', '1px')
+            // })
+            // .on('mouseout', function (d, i) {
+            //     d3.select(this).transition()
+            //         .duration('100')
+            //         .style("stroke", "blue")
+            //         .style('stroke-width', '15px')
+            // });
 
         });
 

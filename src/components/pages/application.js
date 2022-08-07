@@ -16,11 +16,12 @@ function Application () {
                 <div className='setting'></div>
                 <div className='setting'></div>
                 <div className='setting'></div>
-                <div className='setting'></div>
+                <div className='settingå'></div>
                 <div className='setting'></div>
             </div>
             <div className='charts'>
-                <Chart/>
+                <Chart.Chart/>
+                {/* <Chart/> */}
                 <Map/>
             </div>
         </div>
