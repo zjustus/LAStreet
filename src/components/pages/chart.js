@@ -260,6 +260,28 @@ function Chart() {
                 .style('opacity', 0);
         });
 
+        // d3.select('#container').append('Select').attr('id', 'hi');
+        function create() {
+            return <h1>welcome back!</h1>;
+        }
+        function greeting() {
+            return <create />;
+        }
+        greeting();
+        <Select id='mySelect1' 
+        options={myOptions}
+        isMulti
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        onChange={(event) => {
+            console.log(event);
+
+            // d3.select('#container')
+            //     .selectAll('[id="dots"')
+            //     .attr('class', 'brushed');
+        }}
+/>
+
         //testing d3 dropdown
         d3.select('#container').select('[id="selectButton"]').remove();
         d3.select('#container').append('select').attr('id', 'selectButton')
@@ -898,13 +920,13 @@ function Chart() {
                     isMulti
                     closeMenuOnSelect={false}
                     hideSelectedOptions={false}
-                    // onChange={(event) => {
-                    //     console.log(event);
+                    onChange={(event) => {
+                        console.log(event);
 
-                    //     d3.select('#container')
-                    //         .selectAll('[id="dots"')
-                    //         .attr('class', 'brushed');
-                    // }}
+                        // d3.select('#container')
+                        //     .selectAll('[id="dots"')
+                        //     .attr('class', 'brushed');
+                    }}
             />
             <div id='sliderFamily'>
                 <div id='sliderFirstRow'>

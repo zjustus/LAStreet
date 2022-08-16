@@ -12,14 +12,6 @@ function Application () {
             <div className='intro'>
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
-            {/* <div className='buttons'>
-                <div className='setting'></div>
-                <div className='setting'></div>
-                <div className='setting'></div>
-                <div className='setting'></div>
-                <div className='settingå'></div>
-                <div className='setting'></div>
-            </div> */}
             {/* <Dropdown/> */}
             <div className='charts'>
                 <Chart/>

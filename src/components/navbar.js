@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
+import { HashLink } from "react-router-hash-link";
 import './navbar.css';
 import {Button} from './button';
 
@@ -29,27 +30,27 @@ function Navbar() {
         <>
             <nav className='navbar'>
                 <div className='navbar-container'>
-                    <Link to='/' className="navbar-logo" onClick={closeMobileMenu}>
+                    <HashLink to='/' className="navbar-logo" onClick={closeMobileMenu}>
                         HSPA 
-                    </Link>
+                    </HashLink>
                     <div className='menu-icon' onClick={handleClick}>
                         <i className={click ? 'fas fa-times' : 'fas fa-bars'} />
                     </div>
                     <ul className={click ? 'nav-menu active' : 'nav-menu'}>
                         <li className='nav-item'>
-                            <Link to='/' className='nav-links' onClick={closeMobileMenu}>
+                            <HashLink smooth to='/#home' className='nav-links' onClick={closeMobileMenu}>
                                 Home
-                            </Link>
+                            </HashLink>
                         </li>
                         <li className='nav-item'>
-                            <Link to='/application' className='nav-links' onClick={closeMobileMenu}>
+                            <HashLink smooth to='/application' className='nav-links' onClick={closeMobileMenu}>
                                 Application
-                            </Link>
+                            </HashLink>
                         </li>
                         <li className='nav-item'>
-                            <Link to='/documentation' className='nav-links' onClick={closeMobileMenu}>
+                            <HashLink smooth to='/#documentation' className='nav-links' onClick={closeMobileMenu}>
                                 Documentation
-                            </Link>
+                            </HashLink>
                         </li>
                     </ul>
                     {button && <Button buttonStyle='btn--outline'>GET STARTED</Button>}

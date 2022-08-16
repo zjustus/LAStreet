@@ -15,11 +15,17 @@ function Home () {
     }, []);
 
     return (
-        <>
-            <HeroSection/>
-            <Infobox/>
-            <Documentation/>
-        </>
+        <div>
+            <div className='section' id="home">
+                <HeroSection/>
+            </div>
+            <div className='section' id="infoBox">
+                <Infobox/>
+            </div>
+            <div className='section' id="documentation">
+                <Documentation/>
+            </div>
+        </div>
     );
 }
 
