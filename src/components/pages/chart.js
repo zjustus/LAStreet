@@ -1,9 +1,13 @@
 import './chart.css';
-import {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 import * as d3Slider from 'd3-simple-slider';
+import Select, {components} from "react-select";
+// import { Dropdown } from './dropdown';
+
 
 function Chart() {
+
 
     function getGeoData(url) {
         return fetch(url)
@@ -19,16 +23,13 @@ function Chart() {
             //width rating = actual width / designation width
             var width_ratio = feature.properties['width_ratio'];
             var width_rating;
-            if(width_ratio > 1)
-            {
+            if(width_ratio > 1) {
                 width_rating = 1.0;
             }
-            else if(width_ratio < 0.5)
-            {
+            else if(width_ratio < 0.5) {
                 width_rating = 0.1;
             }
-            else
-            {
+            else {
                 width_rating = 3.6 * (width_ratio - 0.5)**2 + 0.1;
             }
             //round to 4 decimal digits
@@ -45,16 +46,13 @@ function Chart() {
             //sidewalk rating = designated sidewalk points / section length
             var sidewalk_ratio = feature.properties['sidewalk_ratio'];
             var sidewalk_rating;
-            if(sidewalk_ratio > 0.19)
-            {
+            if(sidewalk_ratio > 0.19) {
                 sidewalk_rating = 1;
             }
-            else if(sidewalk_ratio < 0)
-            {
+            else if(sidewalk_ratio < 0) {
                 sidewalk_rating = 0.1;
             }
-            else
-            {
+            else {
                 sidewalk_rating = 24.931 * sidewalk_ratio ** 2 + 0.1;
             }
             sidewalk_rating = Math.round(sidewalk_rating * 1e4) / 1e4;
@@ -63,16 +61,13 @@ function Chart() {
             //curb rating = designated curb points / section length
             var curb_ratio = feature.properties['curb_ratio'];
             var curb_rating;
-            if(curb_ratio > 0.25)
-            {
+            if(curb_ratio > 0.25) {
                 curb_rating = 1;
             }
-            else if(curb_ratio < 0)
-            {
+            else if(curb_ratio < 0) {
                 curb_rating = 0.1;
             }
-            else
-            {
+            else {
                 curb_rating = 14.4 * curb_ratio ** 2 + 0.1;
             }
             curb_rating = Math.round(curb_rating * 1e4) / 1e4;
@@ -85,139 +80,40 @@ function Chart() {
             newGeoData.push(street['properties']);
         })
 
-        //Condition weights default
-        var widthRW = 0.33;
-        var pciRW = 0.33;
-        var curbRW = 0.26;
-        var sidewalkRW = 0.07;
+        //updatedGeoData contains properties and geometry array with the new rating calculations
+        console.log(updatedGeoData);
 
-        //Importance weights default
-        var distanceW = 0.25;
-        var populationW = 0.25;
-        var timeW = 0.25;
-        var widthW = 0.25;
 
-        //sliders
-        //npm install d3-simple-slider
-        d3.select('#sliderContainer1')
-        .select('svg')
-        .remove();
-        d3.select('#sliderContainer2')
-        .select('svg')
-        .remove();
-        d3.select('#sliderContainer3')
-        .select('svg')
-        .remove();
-        d3.select('#sliderContainer4')
-        .select('svg')
-        .remove();
-        d3.select('#sliderValues')
-        .select('g')
-        .remove();
+        //new approach using only one array
+        //Condition: widthRW, pciRW, curbRW, sidewalkRW
+        //Importance: distanceW, populationW, timeW, widthW
+        var sliderInputArray = {'widthRW': 0.33,'pciRW': 0.33,'curbRW': 0.26,'sidewalkRW': 0.07,
+                            'distanceW': 0.25,'populationW': 0.25,'timeW': 0.25,'widthW': 0.25};
 
-        var slider1 = d3Slider.sliderBottom()
-                    .min(0).max(1).width(150).ticks(5).default(0.33)
-                 // .step(0.1) //remove this if you dont want steps
-                    .on('onchange', function(val) {
-                        sliderValue1.text(d3.format('.2')(val));
-                        // widthSlider(val);
-                        // widthRW = this.value();
-                        // console.log('widthRW is: ' + widthRW);
-                    });
 
-        var slider2 = d3Slider.sliderBottom()
-                    .min(0).max(1).width(150).ticks(5).default(0.33)
-                    .on('onchange', function(val) {
-                        sliderValue2.text(d3.format('.2')(val));
-                    });
+        //function to insert and update importance and condition values in data
+        function importanceCondition (sliderInputArray) {
+            newGeoData.forEach(function(i) {
+                //Condition
+                const RW = i['width_rating'];
+                const RP = i['pci_rating'];
+                const RC = i['curb_rating'];
+                const RS = i['sidewalk_rating'];
+                const condition = RW * sliderInputArray['widthRW'] + RP * sliderInputArray['pciRW'] + RC * sliderInputArray['curbRW'] + RS * sliderInputArray['sidewalkRW'];
+                i['condition'] = condition;
+                //Importance
+                const CD = i['centrality_distance'];
+                const CT = i['centrality_time'];
+                const CW = i['centrality_width'];
+                const CP = i['centrality_population'];
+                const importance = CD * sliderInputArray['distanceW'] + CT * sliderInputArray['timeW'] + CW * sliderInputArray['widthW'] + CP * sliderInputArray['populationW'];
+                i['importance'] = importance;            
+                })
+            return newGeoData;
+        }
+        importanceCondition(sliderInputArray);
 
-        var slider3 = d3Slider.sliderBottom()
-        .min(0).max(1).width(150).ticks(5).default(0.26)
-        .on('onchange', function(val) {
-            sliderValue3.text(d3.format('.2')(val));
-        });
-        
-        var slider4 = d3Slider.sliderBottom()
-        .min(0).max(1).width(150).ticks(5).default(0.07)
-        .on('onchange', function(val) {
-            sliderValue4.text(d3.format('.2')(val));
-        });   
-
-        var sliderValue1 = d3.select('#sliderValueOne')
-                            .append('g')
-                            .append('text');
-        var sliderValue2 = d3.select('#sliderValueTwo')
-                            .append('g')
-                            .append('text');
-        var sliderValue3 = d3.select('#sliderValueThree')
-                            .append('g')
-                            .append('text');
-        var sliderValue4 = d3.select('#sliderValueFour')
-                            .append('g')
-                            .append('text');
-
-        //display default
-        // sliderValue.text(d3.format('.2')(slider.value()));
-
-        // CHANGE: COME BACK AND FINISH THIS YOURE SO CLOSE
-        // function widthSlider(input) {
-        //     widthRW = input;
-        //     newGeoData.forEach(function(i) {
-        //         i['widthRW'] = widthRW;
-        //     })
-        //     console.log(newGeoData);
-        // }
-
-        var sliderContainer1 = d3.select('#sliderContainer1')
-            .append('svg')
-            .attr('width', 200)
-            .attr('height', 80)
-            .append('g')
-            .attr('transform', 'translate(30,30)');
-
-        var sliderContainer2 = d3.select('#sliderContainer2')
-            .append('svg')
-            .attr('width', 200)
-            .attr('height', 80)
-            .append('g')
-            .attr('transform', 'translate(30,30)');
-
-        var sliderContainer3 = d3.select('#sliderContainer3')
-        .append('svg')
-        .attr('width', 200)
-        .attr('height', 80)
-        .append('g')
-        .attr('transform', 'translate(30,30)');
-
-        var sliderContainer4 = d3.select('#sliderContainer4')
-        .append('svg')
-        .attr('width', 200)
-        .attr('height', 80)
-        .append('g')
-        .attr('transform', 'translate(30,30)');
-
-        sliderContainer1.call(slider1);
-        sliderContainer2.call(slider2);
-        sliderContainer3.call(slider3);
-        sliderContainer4.call(slider4);
-
-        //insert importance and condition values in data
-        newGeoData.forEach(function(i) {
-            //Condition
-            const RW = i['width_rating'];
-            const RP = i['pci_rating'];
-            const RC = i['curb_rating'];
-            const RS = i['sidewalk_rating'];
-            const condition = RW * widthRW + RP * pciRW + RC * curbRW + RS * sidewalkRW;
-            i['condition'] = condition;
-            //Importance
-            const CD = i['centrality_distance'];
-            const CT = i['centrality_time'];
-            const CW = i['centrality_width'];
-            const CP = i['centrality_population'];
-            const importance = CD * distanceW + CT * timeW + CW * widthW + CP * populationW;
-            i['importance'] = importance;
-        })
+        //newGeoData now contains a condition and importance field
         console.log(newGeoData);  
         
         
@@ -316,25 +212,27 @@ function Chart() {
 
         // Create the scatter variable: where both the circles and the brush take place
         var scatter = svg.append('g')
-        .attr("clip-path", "url(#clip)");
+        .attr("clip-path", "url(#clip)")
+        .attr('id', 'scatter');
 
         //tooltip
         var tooltip = d3.select('#container').append('div')
         .attr('class', 'tooltip')
         .style('opacity', 0);
 
-        //set up svg data
+        //set up default svg data
         var myScatter = scatter.selectAll()
         .data(newGeoData)
         .enter()
         .append('circle')
+        .attr('id', 'dots')
         .attr('cx', function(d) {
             return xScale(d.condition); //CHANGE x axis data
         })
         .attr('cy', function(d) {
-            return yScale(d.importance);//CHANGE y axis data
+            return yScale(d.importance); //CHANGE y axis data
         })
-        .attr('r', 6)
+        .attr('r', 5)
         .attr('class', 'non_brushed')
         //expand points upon hover
         .on('mouseover', function (d, i) {
@@ -362,15 +260,434 @@ function Chart() {
                 .style('opacity', 0);
         });
 
+        //testing d3 dropdown
+        d3.select('#container').select('[id="selectButton"]').remove();
+        d3.select('#container').append('select').attr('id', 'selectButton')
+        .attr('multiple', 'true');
+        //Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.
+        var allGroup = ['disadvantage', 'nondisadvantage', 'lowincome'];
+        d3.select('#container').select('[id="selectButton"]')
+            .selectAll('myOption')
+            .data(allGroup)
+            .enter()
+            .append('option')
+            .text(function(d) {return d;})
+            .attr('value', function(d) {return d;})
+
+        d3.select('[id="selectButton"]').on('change', function(d) {
+            console.log(d3.select(this).property('value'));
+        })
+
+        // manual dropdown menu
+        var userSelectedDesignation = ['Avenue I', 'Avenue II', 'Avenue III', 'Boulevard I', 'Boulevard II', 'Collector', 'Hillside Collector', 'Local Street - Standard', 'Modified Avenue I', 'Modified Avenue II', 'Modified Avenue III', 'Modified Boulevard II', 'Modified Collector', 'Modified Local Street Standard', 'Modified Scenic Arterial Mountain', 'Mountain Collector', 'Private', 'Scenic Parkway', 'Unidentified'];
+        var userSelectedLocation = ['northla', 'centralla', 'southla'];
+        var userSelectedCommunity = ['lowincome', 'disadvantage', 'nondisadvantage'];
+        var userSelectedCouncil = ['1', '2', '3', '4', '5', '6', '7', '11', '12', '13', '14', '15'];
+        var userSelectedWithdrawn = ['withdrawn', 'notwithdrawn'];
+        var userSelectedMaintain = ['maintain', 'notmaintain'];
+
+        function designationFilter(userSelected, data) {
+            var temp = [];
+            //if string 'disadvantage' is in the userSelected string array
+            if(userSelected.indexOf('Avenue I') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Avenue I') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Avenue II') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Avenue II') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Avenue III') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Avenue III') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Boulevard I') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Boulevard I') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Boulevard II') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Boulevard II') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Collector') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Collector') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Hillside Collector') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Hillside Collector') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Local Street - Standard') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Local Street - Standard') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Avenue I') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Avenue I') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Avenue II') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Avenue II') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Avenue III') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Avenue III') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Boulevard II') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Boulevard II') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Collector') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Collector') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Local Street Standard') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Local Street Standard') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Modified Scenic Arterial Mountain') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Modified Scenic Arterial Mountain') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Mountain Collector') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Mountain Collector') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Private') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Private') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Scenic Parkway') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Scenic Parkway') { temp.push(i); }})
+            }
+            if(userSelected.indexOf('Unidentified') > -1) {
+                data.forEach(function(i) { if(i['Street_Designation'] == 'Unidentified') { temp.push(i); }})
+            }
+            return temp;
+        }
+
+        //centroid_lat
+        function locationFilter(userSelected, data) {
+            var temp = [];
+            //if string 'disadvantage' is in the userSelected string array
+            if(userSelected.indexOf('northla') > -1) {
+                data.forEach(function(i) { if(i['centroid_lat'] > 34.1935) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('centralla') > -1) {
+                data.forEach(function(i) { if(i['centroid_lat'] > 33.911 && i['centroid_lat'] < 34.1935) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('southla') > -1) {
+                data.forEach(function(i) { if(i['centroid_lat'] < 33.911) { temp.push(i); }})
+            }
+            return temp;
+        }
+
+        //communityFilter returns data after filtering userSelected communities
+        function communityFilter(userSelected, data) {
+            var temp = [];
+            //if string 'disadvantage' is in the userSelected string array
+            if(userSelected.indexOf('disadvantage') > -1) {
+                data.forEach(function(i) { if(i['DAC'] == 1) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('nondisadvantage') > -1) {
+                data.forEach(function(i) { if(i['DAC'] == 0) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('lowincome') > -1) {
+                data.forEach(function(i) { if(i['lowincome'] == 1) { temp.push(i); }})
+            }
+            return temp;
+        }
+
+        function councilFilter(userSelected, data) {
+            var temp = [];
+            if(userSelected.indexOf('1') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 1) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('2') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 2) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('3') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 3) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('4') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 4) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('5') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 5) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('6') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 6) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('7') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 7) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('11') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 11) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('12') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 12) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('13') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 13) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('14') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 14) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('15') > -1) {
+                data.forEach(function(i) { if(i['CD'] == 15) { temp.push(i); }})
+            }
+            return temp;
+        }
+
+        function withdrawnFilter(userSelected, data) {
+            var temp = [];
+            if(userSelected.indexOf('withdrawn') > -1) {
+                data.forEach(function(i) { if(i['withdrawn'] == 1) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('notwithdrawn') > -1) {
+                data.forEach(function(i) { if(i['withdrawn'] == 0) { temp.push(i); }})
+            }
+            return temp;
+        }
+
+        function maintainFilter(userSelected, data) {
+            var temp = [];
+            if(userSelected.indexOf('maintain') > -1) {
+                data.forEach(function(i) { if(i['Not_maintained'] == 0) { temp.push(i); }})
+            }
+            if(userSelected.indexOf('notmaintain') > -1) {
+                data.forEach(function(i) { if(i['Not_maintained'] == 1) { temp.push(i); }})
+            }
+            return temp;
+        }
+ 
+        var filteredData = [];
+
+        var designationData = designationFilter(userSelectedDesignation, newGeoData);
+        var locationData = locationFilter(userSelectedLocation, newGeoData);
+        var communityData = communityFilter(userSelectedCommunity, newGeoData);
+        var councilData = councilFilter(userSelectedCouncil, newGeoData);
+        var withdrawnData = withdrawnFilter(userSelectedWithdrawn, newGeoData);
+        var maintainData = maintainFilter(userSelectedMaintain, newGeoData);
+
+        //get the intersection between these arrays
+        designationData.forEach (function(i) {
+            if(locationData.includes(i) && communityData.includes(i) && councilData.includes(i) && withdrawnData.includes(i) && maintainData.includes(i)) {
+                filteredData.push(i);
+            }
+        })
+
+        d3.select('#container').selectAll('[id="dots"]').remove();
+        d3.select('#container').select('[id="scatter"]').selectAll('circle')
+        .data(filteredData).enter().append('circle').attr('id', 'dots')
+        .attr('cx', function(d) {
+            return xScale(d.condition); //CHANGE x axis data
+        })
+        .attr('cy', function(d) {
+            return yScale(d.importance);//CHANGE y axis data
+        })
+        .attr('r', 5)
+        .attr('class', 'non_brushed')
+
+        //sliders
+        //npm install d3-simple-slider
+        d3.select('#sliderContainer1').select('svg').remove();
+        d3.select('#sliderContainer2').select('svg').remove();
+        d3.select('#sliderContainer3').select('svg').remove();
+        d3.select('#sliderContainer4').select('svg').remove();
+        d3.select('#sliderContainer5').select('svg').remove();
+        d3.select('#sliderContainer6').select('svg').remove();
+        d3.select('#sliderContainer7').select('svg').remove();
+        d3.select('#sliderContainer8').select('svg').remove();
+        d3.select('#sliderValueOne').select('g').remove();
+        d3.select('#sliderValueTwo').select('g').remove();
+        d3.select('#sliderValueThree').select('g').remove();
+        d3.select('#sliderValueFour').select('g').remove();
+        d3.select('#sliderValueFive').select('g').remove();
+        d3.select('#sliderValueSix').select('g').remove();
+        d3.select('#sliderValueSeven').select('g').remove();
+        d3.select('#sliderValueEight').select('g').remove();
+
+        function updateChart(data) {
+            //update chart
+            d3.select('#container')
+            .select('[id="scatter"]')
+            .selectAll('circle')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('id', 'dots')
+            .attr('cx', function(d) {
+                return xScale(d.condition); //CHANGE x axis data
+            })
+            .attr('cy', function(d) {
+                return yScale(d.importance);//CHANGE y axis data
+            })
+            .attr('r', 5)
+            .attr('class', 'non_brushed')
+
+            allowBrush();
+        }
+
+        function getFilteredData(data) {
+            var filteredData = [];
+            var designationData = designationFilter(userSelectedDesignation, newGeoData);
+            var locationData = locationFilter(userSelectedLocation, newGeoData);
+            var communityData = communityFilter(userSelectedCommunity, newGeoData);
+            var councilData = councilFilter(userSelectedCouncil, newGeoData);
+            var withdrawnData = withdrawnFilter(userSelectedWithdrawn, newGeoData);
+            var maintainData = maintainFilter(userSelectedMaintain, newGeoData);
+    
+            //get the intersection between these arrays
+            designationData.forEach (function(i) {
+                if(locationData.includes(i) && communityData.includes(i) && councilData.includes(i) && withdrawnData.includes(i) && maintainData.includes(i)) {
+                    filteredData.push(i);
+                }
+            })
+            return filteredData;
+        }
+    
+        var slider1 = d3Slider.sliderBottom()
+                    .min(0).max(1).width(100).ticks(5).default(0.33)
+                 // .step(0.1) //remove this if you dont want steps
+                    .on('onchange', function(val) {
+                        sliderValue1.text(d3.format('.2')(val));
+                        sliderInputArray['widthRW'] = val;
+                        svg.selectAll('[id="dots"]').remove();
+
+                        //update data
+                        console.log(sliderInputArray);
+                        var newnewGeoData = importanceCondition(sliderInputArray);
+                        //get filtered data
+                        var filteredData = getFilteredData(newnewGeoData);
+                        //update chart
+                        updateChart(filteredData);
+                    });
+
+        var slider2 = d3Slider.sliderBottom()
+                    .min(0).max(1).width(100).ticks(5).default(0.33)
+                    .on('onchange', function(val) {
+                        sliderValue2.text(d3.format('.2')(val));
+                        sliderInputArray['pciRW'] = val;
+                        svg.selectAll('[id="dots"]').remove();
+
+                        //update data
+                        console.log(sliderInputArray);
+                        var newnewGeoData = importanceCondition(sliderInputArray);
+                        //get filtered data
+                        var filteredData = getFilteredData(newnewGeoData);
+                        //update chart
+                        updateChart(filteredData);
+                    });
+
+        var slider3 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.26)
+        .on('onchange', function(val) {
+            sliderValue3.text(d3.format('.2')(val));
+            sliderInputArray['curbRW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+        
+        var slider4 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.07)
+        .on('onchange', function(val) {
+            sliderValue4.text(d3.format('.2')(val));
+            sliderInputArray['sidewalkRW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+        
+        var slider5 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.25)
+        .on('onchange', function(val) {
+            sliderValue5.text(d3.format('.2')(val));
+            sliderInputArray['distanceW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+
+        var slider6 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.25)
+        .on('onchange', function(val) {
+            sliderValue6.text(d3.format('.2')(val));
+            sliderInputArray['timeW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+
+        var slider7 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.25)
+        .on('onchange', function(val) {
+            sliderValue7.text(d3.format('.2')(val));
+            sliderInputArray['widthW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+
+        var slider8 = d3Slider.sliderBottom()
+        .min(0).max(1).width(100).ticks(5).default(0.25)
+        .on('onchange', function(val) {
+            sliderValue8.text(d3.format('.2')(val));
+            sliderInputArray['populationW'] = val;
+            svg.selectAll('[id="dots"]').remove();
+
+            //update data
+            console.log(sliderInputArray);
+            var newnewGeoData = importanceCondition(sliderInputArray);
+            //get filtered data
+            var filteredData = getFilteredData(newnewGeoData);
+            //update chart
+            updateChart(filteredData);
+        });
+
+        var sliderValue1 = d3.select('#sliderValueOne').append('g').append('text');
+        var sliderValue2 = d3.select('#sliderValueTwo').append('g').append('text');
+        var sliderValue3 = d3.select('#sliderValueThree').append('g').append('text');
+        var sliderValue4 = d3.select('#sliderValueFour').append('g').append('text');
+        var sliderValue5 = d3.select('#sliderValueFive').append('g').append('text');
+        var sliderValue6 = d3.select('#sliderValueSix').append('g').append('text');
+        var sliderValue7 = d3.select('#sliderValueSeven').append('g').append('text');
+        var sliderValue8 = d3.select('#sliderValueEight').append('g').append('text');
+
+        d3.select('#sliderContainer1').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider1);
+        d3.select('#sliderContainer2').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider2);
+        d3.select('#sliderContainer3').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider3);
+        d3.select('#sliderContainer4').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider4);
+        d3.select('#sliderContainer5').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider5);
+        d3.select('#sliderContainer6').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider6);
+        d3.select('#sliderContainer7').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider7);
+        d3.select('#sliderContainer8').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider8);
+
         //BRUSH FEATURE
         function highlightBrushedCircles() {
             if (d3.event.selection != null) {
                 // revert circles to initial style
-                myScatter.attr("class", "non_brushed");
+                var dots = d3.select('#container').selectAll('[id="dots"]');
+
+                dots.attr("class", "non_brushed");
                 var brush_coords = d3.brushSelection(this);
 
                 // style brushed circles
-                myScatter.filter(function (){
+                dots.filter(function (){
                             var cx = d3.select(this).attr("cx"),
                                 cy = d3.select(this).attr("cy");
                             return isBrushed(brush_coords, cx, cy);
@@ -394,7 +711,6 @@ function Chart() {
                 return false;
             }
         }
-
 
         function displayTable() {
 
@@ -431,8 +747,8 @@ function Chart() {
                 })
             })
 
-            var mapW = 400;
-            var mapH = 500;
+            var mapW = 500; //CHANGE this if you change the map container size in map.js
+            var mapH = 600;
             var projection = d3.geoEquirectangular()
             .scale(mapW * 100)
             .center([-118.4, 34.03])
@@ -498,12 +814,24 @@ function Chart() {
             }
         }
 
+        // var brush = d3.brush()
+        // .on("brush", highlightBrushedCircles)
+        // .on("end", displayTable); 
+
+        // svg.append("g").attr('id', 'brushrect')
+        // .call(brush);
+
+
         var brush = d3.brush()
         .on("brush", highlightBrushedCircles)
         .on("end", displayTable); 
 
-        svg.append("g")
-        .call(brush);
+        function allowBrush() {
+            svg.append("g").attr('id', 'brushrect')
+            .call(brush);
+        }
+
+        allowBrush();
 
         function makeSelectedSection() {
             const section = d3.select('#container')
@@ -554,24 +882,58 @@ function Chart() {
 
     })
 
+    const myOptions = [
+        { value: 'advantage', label: 'Non disadvantage Community' },
+        { value: 'disadvantage', label: 'Disadvantage Community' },
+        { value: 'lowincome', label: 'Low Income' }
+    ];
 
     
     //draw grid lines if you want
 
     return (
         <div id='bigcontainer'>
+            <Select id='mySelect' 
+                    options={myOptions}
+                    isMulti
+                    closeMenuOnSelect={false}
+                    hideSelectedOptions={false}
+                    // onChange={(event) => {
+                    //     console.log(event);
+
+                    //     d3.select('#container')
+                    //         .selectAll('[id="dots"')
+                    //         .attr('class', 'brushed');
+                    // }}
+            />
             <div id='sliderFamily'>
-                <div id='sliderContainer1'>
-                    <div id='sliderValueOne'/>
+                <div id='sliderFirstRow'>
+                    <div id='sliderContainer1'>
+                        <div id='sliderValueOne'/>
+                    </div>
+                    <div id='sliderContainer2'>
+                        <div id='sliderValueTwo'/>
+                    </div>
+                    <div id='sliderContainer3'>
+                        <div id='sliderValueThree'/>
+                    </div>
+                    <div id='sliderContainer4'>
+                        <div id='sliderValueFour'/>
+                    </div>
                 </div>
-                <div id='sliderContainer2'>
-                    <div id='sliderValueTwo'/>
-                </div>
-                <div id='sliderContainer3'>
-                    <div id='sliderValueThree'/>
-                </div>
-                <div id='sliderContainer4'>
-                    <div id='sliderValueFour'/>
+                <div id='sliderSecondRow'>
+                    <div id='sliderContainer5'>
+                        <div id='sliderValueFive'/>
+                    </div>
+                    <div id='sliderContainer6'>
+                        <div id='sliderValueSix'/>
+                    </div>
+                    <div id='sliderContainer7'>
+                        <div id='sliderValueSeven'/>
+                    </div>
+                    <div id='sliderContainer8'>
+                        <div id='sliderValueEight'/>
+                    </div>
                 </div>
             </div>
             <div id='container'>
@@ -581,11 +943,5 @@ function Chart() {
 
 }
 
-function lol() {
-    console.log('tehe');
-    return 3;
-}
 
-
-
-export default {Chart, lol};
+export default Chart;

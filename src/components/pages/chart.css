@@ -59,17 +59,26 @@ div.tooltip {
 
 #sliderFamily {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     /* background-color: black; */
-    width: 800px;
+    /* width: 800px;
     height: 100px;
-    margin-left: -20px;
+    margin-left: -20px; */
+}
+
+#sliderFirstRow, #sliderSecondRow {
+    display: flex;
+    flex-direction: row;
 }
 
 #sliderContainer1, 
 #sliderContainer2, 
 #sliderContainer3,
-#sliderContainer4 {
+#sliderContainer4,
+#sliderContainer5, 
+#sliderContainer6, 
+#sliderContainer7,
+#sliderContainer8 {
     display: flex;
     flex-direction: column;
     justify-content: center;
