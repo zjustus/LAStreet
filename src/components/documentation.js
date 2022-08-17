@@ -89,7 +89,115 @@ function Documentation () {
                 <h3>This procedure makes sure that every curb/sidewalk is matched to a certain SECT_ID, if the closest point of the SECT_ID is not too far away. 
                     If curbs and sidewalks are missing in the GIS database, they will not be accounted for in this procedure.</h3>
 
+                <h3>In communication with CityLA, the following required street widths have been set:</h3>
 
+                <table id="myTable">
+                <tr>
+                    <th>Designation</th>
+                    <th>Required Width</th>
+                    <th>Designation</th>
+                    <th>Required Width</th>
+                </tr>
+                <tr>
+                    <td>Avenue I</td>
+                    <td>70</td>
+                    <td>Modified Avenue III</td>
+                    <td>46</td>
+                </tr>
+                <tr>
+                    <td>Avenue II</td>
+                    <td>56</td>
+                    <td>Modified Boulevard II</td>
+                    <td>80</td>
+                </tr>
+                <tr>
+                    <td>Avenue III</td>
+                    <td>46</td>
+                    <td>Modified Collector</td>
+                    <td>40</td>
+                </tr>
+                <tr>
+                    <td>Boulevard I</td>
+                    <td>100</td>
+                    <td>Modified Local Street Standard</td>
+                    <td>28</td>
+                </tr>
+                <tr>
+                    <td>Boulevard II</td>
+                    <td>80</td>
+                    <td>Modified Scenic Arterial Mountain</td>
+                    <td>28</td>
+                </tr>
+                <tr>
+                    <td>Collector</td>
+                    <td>40</td>
+                    <td>Mountain Collector</td>
+                    <td>40</td>
+                </tr>
+                <tr>
+                    <td>Hillside Collector</td>
+                    <td>40</td>
+                    <td>None</td>
+                    <td>28</td>
+                </tr>
+                <tr>
+                    <td>Local Street - Standard</td>
+                    <td>28</td>
+                    <td>Private</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>Modified Avenue I</td>
+                    <td>70</td>
+                    <td>Scenic Parkway</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>Modified Avenue II</td>
+                    <td>56</td>
+                    <td>Unidentified</td>
+                    <td>28</td>
+                </tr>
+                </table>
+
+                <h2>Sub Condition Rating</h2>
+                <p>The rating process contains 4 different categories: Width, PCI, Sidewalks, and Curbs. For every category, a score from 0.1 to 1 is assigned.</p>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p>Following, the four sub-rating categories are described:</p>
+                
+                <div className='conditionRating'>
+                    <div className='rating'>
+                        <div className='ratingTitle'>
+                            Width Rating
+                        </div>
+                        <div className='ratingDescription'>
+                        The width rating is dependent on the ratio between the actual street width and the designated street width, which can be seen in the table above. If the ratio is below 0.5, the street section gets the minimum sub-score of 0.1. If the actual width is equal to or greater than the designated width, the street section gets the maximum score of 1.0. The scores in between are connected by a second-order polynomial.
+                        </div>
+                    </div>
+                    <div className='rating'>
+                        <div className='ratingTitle'>
+                            Curb and Sidewalk Rating
+                        </div>
+                        <div className='ratingDescription'>
+                        The curb and sidewalk rating is dependent on the ratio of designated curb or sidewalk points to section length. Street sections get a top score of 1.0 if the desired ratio is equal to or above the average ratio of all sections, excluding the sections with 0 designated sidewalks or curbs. Street sections get the minimum score of 0.1 if the ratio is 0. The scores in between are connected by a second-order polynomial.
+                        </div>
+                    </div>
+                    <div className='rating'>
+                        <div className='ratingTitle'>
+                            PCI Rating
+                        </div>
+                        <div className='ratingDescription'>
+                        The PCI rating can be described as the square of the PCI divided by 100.
+                        </div>
+                    </div>
+                    <br></br>
+                    <h3>The following figure shows the rating curves for all sub-ratings except PCI:</h3>
+                    <br></br>
+                    <br></br>
+                <img src={process.env.PUBLIC_URL+'images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
+                </div>
             </div>
         </div>
     );
