@@ -57,6 +57,15 @@ div.tooltip {
     margin-right: 10px;
 }
 
+#switchModeButton {
+    background: lightgrey;
+    color: black;
+    border-radius: 20px;
+    border-color: white;
+    padding: 10px;
+    margin-left: -20px;
+}
+
 #filterFamily {
     display: flex;
     flex-direction: column;

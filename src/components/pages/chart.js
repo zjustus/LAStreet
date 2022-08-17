@@ -215,6 +215,7 @@ function Chart() {
         .attr("clip-path", "url(#clip)")
         .attr('id', 'scatter');
 
+
         //tooltip
         var tooltip = d3.select('#container').append('div')
         .attr('class', 'tooltip')
@@ -729,6 +730,31 @@ function Chart() {
             })
             .attr('r', 5)
             .attr('class', 'non_brushed')
+                    //expand points upon hover
+        .on('mouseover', function (d, i) {
+            d3.select(this).transition()
+                .duration('100')
+                .attr("r", 7);
+            //make div appear
+            tooltip.transition()
+                .duration(100)
+                .style('opacity', 1);
+            //CHANGE tooltip fields
+            tooltip.html("Street Name: " + d.ST_NAME + " " +
+                        "Condition: " + Math.round(d.condition * 1e4) / 1e4 + " " + 
+                        "Importance: " + Math.round(d.importance * 1e4) / 1e4)
+                .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
+                .style("top", (d3.event.pageY - 15) + "px");
+        })
+        .on('mouseout', function (d, i) {
+            d3.select(this).transition()
+                    .duration('200')
+                    .attr("r", 5);
+            //make div disappear
+            tooltip.transition()
+                .duration('200')
+                .style('opacity', 0);
+        });
 
             if(turnOnAllowBrush == true) {
                 allowBrush();
@@ -1052,12 +1078,30 @@ function Chart() {
         .on("brush", highlightBrushedCircles)
         .on("end", displayTable); 
 
-        function allowBrush() {
-            svg.append("g").attr('id', 'brushrect')
-            .call(brush);
+        function allowBrush(activate) {
+            if(activate == true) {
+                svg.append("g").attr('id', 'brushrect')
+                .call(brush);
+            }
+            else {
+                d3.select('#brushrect').remove();
+            }
         }
 
-        allowBrush();
+        var clicked = false;
+        d3.select('#switchModeButton')
+        .on('click', function(d) {
+            if (!clicked) {
+                d3.select('#switchModeButton').text('Brush mode');
+                allowBrush(true);
+                clicked = true;
+            } else {
+                d3.select('#switchModeButton').text('Tooltip mode');
+                clicked = false;
+                allowBrush(false);
+            }
+        })
+        // allowBrush();
 
         function makeSelectedSection() {
             const section = d3.select('#container')
@@ -1178,6 +1222,7 @@ function Chart() {
                     </div>
                 </div>
             </div>
+            <button id='switchModeButton'>Tooltip mode</button>
             <div id='container'>
             </div>
         </div>
