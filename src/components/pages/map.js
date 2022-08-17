@@ -29,8 +29,8 @@ function Map () {
             .call(zoom.transform, d3.zoomIdentity.scale(1));
         });
 
-        var w = 500; //CHANGE mapW and mapH in chart.js if you change this
-        var h = 600;
+        var w = 600; //CHANGE mapW and mapH in chart.js if you change this
+        var h = 700;
 
         var svg = d3.select('#mapContainer')
                 .append('svg')

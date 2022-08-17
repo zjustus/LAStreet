@@ -57,9 +57,100 @@ div.tooltip {
     margin-right: 10px;
 }
 
+#filterFamily {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+}
+
+#filterFirstRow, #filterSecondRow {
+    display: flex;
+    flex-direction: row;
+}
+
+#multiselect1,
+#multiselect2,
+#multiselect3,
+#multiselect4,
+#multiselect5,
+#multiselect6 {
+    /* display: flex;
+    flex-direction: row;
+    justify-content: space-evenly; */
+    width: 200px;
+    margin: 5px;
+}
+
+#selectBox1,
+#selectBox2,
+#selectBox3,
+#selectBox4,
+#selectBox5,
+#selectBox6  {
+    position: relative;
+}
+
+#selectBox1 select,
+#selectBox2 select,
+#selectBox3 select,
+#selectBox4 select,
+#selectBox5 select,
+#selectBox6 select{
+    width: 100%;
+    color: grey;
+    border-color: lightgrey;
+    /* font-weight: bold; */
+}
+
+#overSelect {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+#checkboxes1,
+#checkboxes2,
+#checkboxes3,
+#checkboxes4,
+#checkboxes5,
+#checkboxes6 {
+    display: none;
+    border: 1px #dadada solid;
+  }
+  
+#checkboxes1 label,
+#checkboxes2 label,
+#checkboxes3 label,
+#checkboxes4 label,
+#checkboxes5 label {
+    display: block;
+    font-size: 12px;
+    color: grey;
+    margin: 5px;
+}
+
+#checkboxes6 label {
+    display: block;
+    font-size: 10px;
+    color: grey;
+    margin: 5px;
+}
+
+#checkboxes1 label:hover,
+#checkboxes2 label:hover,
+#checkboxes3 label:hover,
+#checkboxes4 label:hover,
+#checkboxes5 label:hover,
+#checkboxes6 label:hover {
+    background-color: #C6ECFF;
+}
+
 #sliderFamily {
     display: flex;
     flex-direction: column;
+    margin: 15px;
     /* background-color: black; */
     /* width: 800px;
     height: 100px;
@@ -69,6 +160,7 @@ div.tooltip {
 #sliderFirstRow, #sliderSecondRow {
     display: flex;
     flex-direction: row;
+    margin: 5px;
 }
 
 #sliderContainer1, 
@@ -84,4 +176,33 @@ div.tooltip {
     justify-content: center;
     align-items: center;
     font-size: small;
+    margin-left: 20px;
+}
+
+#sliderContainer1 p, 
+#sliderContainer2 p, 
+#sliderContainer3 p,
+#sliderContainer4 p {
+    font-size: 12px;
+    color: lightgray;
+}
+
+#sliderContainer5 p, 
+#sliderContainer6 p, 
+#sliderContainer7 p,
+#sliderContainer8 p{
+    font-size: 11px;
+    color: lightgray;
+}
+
+#sliderValueOne,
+#sliderValueTwo,
+#sliderValueThree,
+#sliderValueFour,
+#sliderValueFive,
+#sliderValueSix,
+#sliderValueSeven,
+#sliderValueEight {
+    height: 3px;
+    color: lightgray;
 }

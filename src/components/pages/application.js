@@ -4,7 +4,6 @@ import Navbar from '../navbar';
 import Chart from './chart';
 import { Button } from '../button';
 import Map from './map';
-import Dropdown from './dropdown';
 
 function Application () {
     return (
@@ -12,10 +11,13 @@ function Application () {
             <div className='intro'>
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
-            {/* <Dropdown/> */}
             <div className='charts'>
-                <Chart/>
-                <Map/>
+                <div className='chart'>
+                    <Chart/>
+                </div>
+                <div className='map'>
+                    <Map/>
+                </div>
             </div>
         </div>
     );

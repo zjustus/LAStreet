@@ -260,45 +260,242 @@ function Chart() {
                 .style('opacity', 0);
         });
 
-        // d3.select('#container').append('Select').attr('id', 'hi');
-        function create() {
-            return <h1>welcome back!</h1>;
-        }
-        function greeting() {
-            return <create />;
-        }
-        greeting();
-        <Select id='mySelect1' 
-        options={myOptions}
-        isMulti
-        closeMenuOnSelect={false}
-        hideSelectedOptions={false}
-        onChange={(event) => {
-            console.log(event);
-
-            // d3.select('#container')
-            //     .selectAll('[id="dots"')
-            //     .attr('class', 'brushed');
-        }}
-/>
-
         //testing d3 dropdown
-        d3.select('#container').select('[id="selectButton"]').remove();
-        d3.select('#container').append('select').attr('id', 'selectButton')
-        .attr('multiple', 'true');
-        //Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.
-        var allGroup = ['disadvantage', 'nondisadvantage', 'lowincome'];
-        d3.select('#container').select('[id="selectButton"]')
-            .selectAll('myOption')
-            .data(allGroup)
-            .enter()
-            .append('option')
-            .text(function(d) {return d;})
-            .attr('value', function(d) {return d;})
+        d3.select('#multiselect1').select('#selectBox1').remove();
+        d3.select('#multiselect2').select('#selectBox2').remove();
+        d3.select('#multiselect3').select('#selectBox3').remove();
+        d3.select('#multiselect4').select('#selectBox4').remove();
+        d3.select('#multiselect5').select('#selectBox5').remove();
+        d3.select('#multiselect6').select('#selectBox6').remove();
 
-        d3.select('[id="selectButton"]').on('change', function(d) {
-            console.log(d3.select(this).property('value'));
+        // var communityDropdown = d3.select('#filterFamily').append('select').attr('id', 'communityDropdown')
+        // .attr('multiple', 'true');
+
+        // communityDropdown
+        //     .selectAll()
+        //     .data(communityOptions)
+        //     .enter()
+        //     .append('option')
+        //     .text(function(d) {return d.label;})
+        //     .attr('value', function(d) {return d.value;})
+
+        //Old version
+        //Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.
+        // IF ONLY I KNOW HOW TO USE THIS ARRAY INSTEAD OF IMPLEMENTING IT MANUALLY
+        var communityOptions = [{ value: 'nondisadvantage', label: 'Non disadvantage Community' },
+                                { value: 'disadvantage', label: 'Disadvantage Community' },
+                                { value: 'lowincome', label: 'Low Income' }];
+
+        //Current version
+        //check boxes in dropdown menu
+        var expanded = false;
+
+        function showCheckboxes(inputCheckboxes) {
+            
+            var checkboxes = document.getElementById(inputCheckboxes);
+            if (!expanded) {
+            checkboxes.style.display = "block";
+            expanded = true;
+            } else {
+            checkboxes.style.display = "none";
+            expanded = false;
+            }
+        }
+
+        //Community dropdown
+        var selectBox = d3.select('#multiselect1').append('div').attr('id', 'selectBox1')
+                            .on('click',function() {showCheckboxes('checkboxes1');} );
+        var communityDropdown = d3.select('#selectBox1').append('select');
+        communityDropdown.append('option').text('Select community...');
+        var overSelect = d3.select('#selectBox1').append('div').attr('id', 'overSelect');
+        var checkBoxes1 = d3.select('#multiselect1').append('div').attr('id', 'checkboxes1');
+
+        //HELP IDK WHY THIS DOESNT WORK SO I HAVE TO DO IT MANUALLY UGH
+        // checkBoxes.selectAll('label')
+        //     .data(communityOptions)
+        //     .enter()
+        //     .append('label')
+        //     .attr('for', function(d) {return d.value;});
+
+        checkBoxes1.append('label').text('Non disadvantage Community ').append('input').attr('type', 'checkbox').attr('value', 'nondisadvantage');
+        checkBoxes1.append('label').text('Disadvantage Community ').append('input').attr('type', 'checkbox').attr('value', 'disadvantage');
+        checkBoxes1.append('label').text('Low Income ').append('input').attr('type', 'checkbox').attr('value', 'lowincome');
+
+        checkBoxes1.on('change', function(d) {
+            communityDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, userSelectedDesignation, userSelectedLocation, values, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
+            updateChart(filteredData, false);
         })
+
+        //Withdrawn dropdown
+        var selectBox = d3.select('#multiselect2').append('div').attr('id', 'selectBox2')
+        .on('click',function() {showCheckboxes('checkboxes2');} );
+        var withdrawnDropdown = d3.select('#selectBox2').append('select');
+        withdrawnDropdown.append('option').text('Select withdrawn...');
+        var overSelect = d3.select('#selectBox2').append('div').attr('id', 'overSelect');
+        var checkBoxes2 = d3.select('#multiselect2').append('div').attr('id', 'checkboxes2');
+
+        checkBoxes2.append('label').text('Withdrawn ').append('input').attr('type', 'checkbox').attr('value', 'withdrawn');
+        checkBoxes2.append('label').text('Not Withdrawn').append('input').attr('type', 'checkbox').attr('value', 'notwithdrawn');
+
+        checkBoxes2.on('change', function(d) {
+            withdrawnDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, values, userSelectedMaintain);
+            updateChart(filteredData, false);
+        })
+
+        //Maintain dropdown
+        var selectBox = d3.select('#multiselect3').append('div').attr('id', 'selectBox3')
+        .on('click',function() {showCheckboxes('checkboxes3');} );
+        var maintainDropdown = d3.select('#selectBox3').append('select');
+        maintainDropdown.append('option').text('Select maintain...');
+        var overSelect = d3.select('#selectBox3').append('div').attr('id', 'overSelect');
+        var checkBoxes3 = d3.select('#multiselect3').append('div').attr('id', 'checkboxes3');
+
+        checkBoxes3.append('label').text('Maintained ').append('input').attr('type', 'checkbox').attr('value', 'maintain');
+        checkBoxes3.append('label').text('Not Maintained').append('input').attr('type', 'checkbox').attr('value', 'notmaintain');
+
+        checkBoxes3.on('change', function(d) {
+            maintainDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, values);
+            updateChart(filteredData, false);
+        })
+
+        //Location dropdown
+        var selectBox = d3.select('#multiselect4').append('div').attr('id', 'selectBox4')
+        .on('click',function() {showCheckboxes('checkboxes4');} );
+        var locationDropdown = d3.select('#selectBox4').append('select');
+        locationDropdown.append('option').text('Select Location...');
+        var overSelect = d3.select('#selectBox4').append('div').attr('id', 'overSelect');
+        var checkBoxes4 = d3.select('#multiselect4').append('div').attr('id', 'checkboxes4');
+
+        checkBoxes4.append('label').text('North Los Angeles ').append('input').attr('type', 'checkbox').attr('value', 'northla');
+        checkBoxes4.append('label').text('Central Los Angeles ').append('input').attr('type', 'checkbox').attr('value', 'centralla');
+        checkBoxes4.append('label').text('South Los Angeles ').append('input').attr('type', 'checkbox').attr('value', 'southla');
+
+        checkBoxes4.on('change', function(d) {
+            locationDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, userSelectedDesignation, values, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
+            updateChart(filteredData, false);
+        })
+
+        //Council District dropdown
+        var selectBox = d3.select('#multiselect5').append('div').attr('id', 'selectBox5')
+        .on('click',function() {showCheckboxes('checkboxes5');} );
+        var councilDropdown = d3.select('#selectBox5').append('select');
+        councilDropdown.append('option').text('Select Council District...');
+        var overSelect = d3.select('#selectBox5').append('div').attr('id', 'overSelect');
+        var checkBoxes5 = d3.select('#multiselect5').append('div').attr('id', 'checkboxes5');
+
+        checkBoxes5.append('label').text('1 ').append('input').attr('type', 'checkbox').attr('value', '1');
+        checkBoxes5.append('label').text('2 ').append('input').attr('type', 'checkbox').attr('value', '2');
+        checkBoxes5.append('label').text('3 ').append('input').attr('type', 'checkbox').attr('value', '3');
+        checkBoxes5.append('label').text('4 ').append('input').attr('type', 'checkbox').attr('value', '4');
+        checkBoxes5.append('label').text('5 ').append('input').attr('type', 'checkbox').attr('value', '5');
+        checkBoxes5.append('label').text('6 ').append('input').attr('type', 'checkbox').attr('value', '6');
+        checkBoxes5.append('label').text('7 ').append('input').attr('type', 'checkbox').attr('value', '7');
+        checkBoxes5.append('label').text('11 ').append('input').attr('type', 'checkbox').attr('value', '11');
+        checkBoxes5.append('label').text('12 ').append('input').attr('type', 'checkbox').attr('value', '12');
+        checkBoxes5.append('label').text('13 ').append('input').attr('type', 'checkbox').attr('value', '13');
+        checkBoxes5.append('label').text('14 ').append('input').attr('type', 'checkbox').attr('value', '14');
+        checkBoxes5.append('label').text('15 ').append('input').attr('type', 'checkbox').attr('value', '15');
+
+
+        checkBoxes5.on('change', function(d) {
+            councilDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, values, userSelectedWithdrawn, userSelectedMaintain);
+            updateChart(filteredData, false);
+        })
+
+
+        //Designation dropdown
+        var selectBox = d3.select('#multiselect6').append('div').attr('id', 'selectBox6')
+        .on('click',function() {showCheckboxes('checkboxes6');} );
+        var designationDropdown = d3.select('#selectBox6').append('select');
+        designationDropdown.append('option').text('Select Designation...');
+        var overSelect = d3.select('#selectBox6').append('div').attr('id', 'overSelect');
+        var checkBoxes6 = d3.select('#multiselect6').append('div').attr('id', 'checkboxes6');
+
+        checkBoxes6.append('label').text('Avenue I ').append('input').attr('type', 'checkbox').attr('value', 'Avenue I');
+        checkBoxes6.append('label').text('Avenue II ').append('input').attr('type', 'checkbox').attr('value', 'Avenue II');
+        checkBoxes6.append('label').text('Avenue III ').append('input').attr('type', 'checkbox').attr('value', 'Avenue III');
+        checkBoxes6.append('label').text('Boulevard I ').append('input').attr('type', 'checkbox').attr('value', 'Boulevard I');
+        checkBoxes6.append('label').text('Boulevard II ').append('input').attr('type', 'checkbox').attr('value', 'Boulevard II');
+        checkBoxes6.append('label').text('Collector ').append('input').attr('type', 'checkbox').attr('value', 'Collector');
+        checkBoxes6.append('label').text('Hillside Collector ').append('input').attr('type', 'checkbox').attr('value', 'Hillside Collector');
+        checkBoxes6.append('label').text('Local Street - Standard ').append('input').attr('type', 'checkbox').attr('value', 'Local Street - Standard');
+        checkBoxes6.append('label').text('Modified Avenue I ').append('input').attr('type', 'checkbox').attr('value', 'Modified Avenue I');
+        checkBoxes6.append('label').text('Modified Avenue II ').append('input').attr('type', 'checkbox').attr('value', 'Modified Avenue II');
+        checkBoxes6.append('label').text('Modified Avenue III ').append('input').attr('type', 'checkbox').attr('value', 'Modified Avenue III');
+        checkBoxes6.append('label').text('Modified Boulevard II ').append('input').attr('type', 'checkbox').attr('value', 'Modified Boulevard II');
+        checkBoxes6.append('label').text('Modified Collector ').append('input').attr('type', 'checkbox').attr('value', 'Modified Collector');
+        checkBoxes6.append('label').text('Modified Local Street Standard ').append('input').attr('type', 'checkbox').attr('value', 'Modified Local Street Standard');
+        checkBoxes6.append('label').text('Modified Scenic Arterial Mountain ').append('input').attr('type', 'checkbox').attr('value', 'Modified Scenic Arterial Mountain');
+        checkBoxes6.append('label').text('Mountain Collector ').append('input').attr('type', 'checkbox').attr('value', 'Mountain Collector');
+        checkBoxes6.append('label').text('Private ').append('input').attr('type', 'checkbox').attr('value', 'Private');
+        checkBoxes6.append('label').text('Scenic Parkway ').append('input').attr('type', 'checkbox').attr('value', 'Scenic Parkway');
+        checkBoxes6.append('label').text('Unidentified ').append('input').attr('type', 'checkbox').attr('value', 'Unidentified');
+
+        checkBoxes6.on('change', function(d) {
+            designationDropdown.style('background-color', '#C6ECFF');
+            var values = [];
+            d3.selectAll('input[type=checkbox]:checked')
+            .each(function() {values.push(this.value)});
+            console.log(values);
+
+            //get filtered data
+            var filteredData = getFilteredData(newGeoData, values, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
+            updateChart(filteredData, false);
+        })
+
+
+        function getFilteredData(data, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain) {
+            var filteredData = [];
+            var designationData = designationFilter(userSelectedDesignation, data);
+            var locationData = locationFilter(userSelectedLocation, data);
+            var communityData = communityFilter(userSelectedCommunity, data);
+            var councilData = councilFilter(userSelectedCouncil, data);
+            var withdrawnData = withdrawnFilter(userSelectedWithdrawn, data);
+            var maintainData = maintainFilter(userSelectedMaintain, data);
+    
+            //get the intersection between these arrays
+            designationData.forEach (function(i) {
+                if(locationData.includes(i) && communityData.includes(i) && councilData.includes(i) && withdrawnData.includes(i) && maintainData.includes(i)) {
+                    filteredData.push(i);
+                }
+            })
+            return filteredData;
+        }
 
         // manual dropdown menu
         var userSelectedDesignation = ['Avenue I', 'Avenue II', 'Avenue III', 'Boulevard I', 'Boulevard II', 'Collector', 'Hillside Collector', 'Local Street - Standard', 'Modified Avenue I', 'Modified Avenue II', 'Modified Avenue III', 'Modified Boulevard II', 'Modified Collector', 'Modified Local Street Standard', 'Modified Scenic Arterial Mountain', 'Mountain Collector', 'Private', 'Scenic Parkway', 'Unidentified'];
@@ -482,17 +679,17 @@ function Chart() {
             }
         })
 
-        d3.select('#container').selectAll('[id="dots"]').remove();
-        d3.select('#container').select('[id="scatter"]').selectAll('circle')
-        .data(filteredData).enter().append('circle').attr('id', 'dots')
-        .attr('cx', function(d) {
-            return xScale(d.condition); //CHANGE x axis data
-        })
-        .attr('cy', function(d) {
-            return yScale(d.importance);//CHANGE y axis data
-        })
-        .attr('r', 5)
-        .attr('class', 'non_brushed')
+        // d3.select('#container').selectAll('[id="dots"]').remove();
+        // d3.select('#container').select('[id="scatter"]').selectAll('circle')
+        // .data(filteredData).enter().append('circle').attr('id', 'dots')
+        // .attr('cx', function(d) {
+        //     return xScale(d.condition); //CHANGE x axis data
+        // })
+        // .attr('cy', function(d) {
+        //     return yScale(d.importance);//CHANGE y axis data
+        // })
+        // .attr('r', 5)
+        // .attr('class', 'non_brushed')
 
         //sliders
         //npm install d3-simple-slider
@@ -513,7 +710,9 @@ function Chart() {
         d3.select('#sliderValueSeven').select('g').remove();
         d3.select('#sliderValueEight').select('g').remove();
 
-        function updateChart(data) {
+        function updateChart(data, turnOnAllowBrush) {
+            //clean chart
+            d3.select('#container').selectAll('[id="dots"]').remove();
             //update chart
             d3.select('#container')
             .select('[id="scatter"]')
@@ -531,26 +730,31 @@ function Chart() {
             .attr('r', 5)
             .attr('class', 'non_brushed')
 
-            allowBrush();
+            if(turnOnAllowBrush == true) {
+                allowBrush();
+            }
+            else {
+
+            }
         }
 
-        function getFilteredData(data) {
-            var filteredData = [];
-            var designationData = designationFilter(userSelectedDesignation, newGeoData);
-            var locationData = locationFilter(userSelectedLocation, newGeoData);
-            var communityData = communityFilter(userSelectedCommunity, newGeoData);
-            var councilData = councilFilter(userSelectedCouncil, newGeoData);
-            var withdrawnData = withdrawnFilter(userSelectedWithdrawn, newGeoData);
-            var maintainData = maintainFilter(userSelectedMaintain, newGeoData);
+        // function getFilteredData(data) {
+        //     var filteredData = [];
+        //     var designationData = designationFilter(userSelectedDesignation, data);
+        //     var locationData = locationFilter(userSelectedLocation, data);
+        //     var communityData = communityFilter(userSelectedCommunity, data);
+        //     var councilData = councilFilter(userSelectedCouncil, data);
+        //     var withdrawnData = withdrawnFilter(userSelectedWithdrawn, data);
+        //     var maintainData = maintainFilter(userSelectedMaintain, data);
     
-            //get the intersection between these arrays
-            designationData.forEach (function(i) {
-                if(locationData.includes(i) && communityData.includes(i) && councilData.includes(i) && withdrawnData.includes(i) && maintainData.includes(i)) {
-                    filteredData.push(i);
-                }
-            })
-            return filteredData;
-        }
+        //     //get the intersection between these arrays
+        //     designationData.forEach (function(i) {
+        //         if(locationData.includes(i) && communityData.includes(i) && councilData.includes(i) && withdrawnData.includes(i) && maintainData.includes(i)) {
+        //             filteredData.push(i);
+        //         }
+        //     })
+        //     return filteredData;
+        // }
     
         var slider1 = d3Slider.sliderBottom()
                     .min(0).max(1).width(100).ticks(5).default(0.33)
@@ -564,9 +768,9 @@ function Chart() {
                         console.log(sliderInputArray);
                         var newnewGeoData = importanceCondition(sliderInputArray);
                         //get filtered data
-                        var filteredData = getFilteredData(newnewGeoData);
+                        var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
                         //update chart
-                        updateChart(filteredData);
+                        updateChart(filteredData, true);
                     });
 
         var slider2 = d3Slider.sliderBottom()
@@ -580,9 +784,9 @@ function Chart() {
                         console.log(sliderInputArray);
                         var newnewGeoData = importanceCondition(sliderInputArray);
                         //get filtered data
-                        var filteredData = getFilteredData(newnewGeoData);
+                        var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
                         //update chart
-                        updateChart(filteredData);
+                        updateChart(filteredData, true);
                     });
 
         var slider3 = d3Slider.sliderBottom()
@@ -596,9 +800,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
         
         var slider4 = d3Slider.sliderBottom()
@@ -612,9 +816,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
         
         var slider5 = d3Slider.sliderBottom()
@@ -628,9 +832,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
 
         var slider6 = d3Slider.sliderBottom()
@@ -644,9 +848,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
 
         var slider7 = d3Slider.sliderBottom()
@@ -660,9 +864,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
 
         var slider8 = d3Slider.sliderBottom()
@@ -676,9 +880,9 @@ function Chart() {
             console.log(sliderInputArray);
             var newnewGeoData = importanceCondition(sliderInputArray);
             //get filtered data
-            var filteredData = getFilteredData(newnewGeoData);
+            var filteredData = getFilteredData(newnewGeoData, userSelectedDesignation, userSelectedLocation, userSelectedCommunity, userSelectedCouncil, userSelectedWithdrawn, userSelectedMaintain);
             //update chart
-            updateChart(filteredData);
+            updateChart(filteredData, true);
         });
 
         var sliderValue1 = d3.select('#sliderValueOne').append('g').append('text');
@@ -769,8 +973,8 @@ function Chart() {
                 })
             })
 
-            var mapW = 500; //CHANGE this if you change the map container size in map.js
-            var mapH = 600;
+            var mapW = 600; //CHANGE this if you change the map container size in map.js
+            var mapH = 700;
             var projection = d3.geoEquirectangular()
             .scale(mapW * 100)
             .center([-118.4, 34.03])
@@ -915,45 +1119,61 @@ function Chart() {
 
     return (
         <div id='bigcontainer'>
-            <Select id='mySelect' 
+            {/* <Select id='mySelect' 
                     options={myOptions}
                     isMulti
                     closeMenuOnSelect={false}
                     hideSelectedOptions={false}
                     onChange={(event) => {
                         console.log(event);
-
-                        // d3.select('#container')
-                        //     .selectAll('[id="dots"')
-                        //     .attr('class', 'brushed');
                     }}
-            />
+            /> */}
+            <div id='filterFamily'>
+                <div id='filterFirstRow'>
+                    <div id='multiselect1'/>
+                    <div id='multiselect2'/>
+                    <div id='multiselect3'/>
+                </div>
+                <div id='filterSecondRow'>
+                    <div id='multiselect4'/>
+                    <div id='multiselect5'/>
+                    <div id='multiselect6'/>
+                </div>
+            </div>
             <div id='sliderFamily'>
                 <div id='sliderFirstRow'>
                     <div id='sliderContainer1'>
+                        <p>Width Rating Weight</p>
                         <div id='sliderValueOne'/>
                     </div>
                     <div id='sliderContainer2'>
+                        <p>PCI Rating Weight</p>
                         <div id='sliderValueTwo'/>
                     </div>
                     <div id='sliderContainer3'>
+                        <p>Curb Rating Weight</p>
                         <div id='sliderValueThree'/>
                     </div>
                     <div id='sliderContainer4'>
+                        <p>Sidewalk Rating Weight</p>
                         <div id='sliderValueFour'/>
                     </div>
                 </div>
                 <div id='sliderSecondRow'>
                     <div id='sliderContainer5'>
+                        <p>Importance Distance Weight</p>
                         <div id='sliderValueFive'/>
                     </div>
                     <div id='sliderContainer6'>
+                        <p>Importance Population Weight</p>
                         <div id='sliderValueSix'/>
                     </div>
                     <div id='sliderContainer7'>
+                        <p>Importance Time Weight</p>
                         <div id='sliderValueSeven'/>
                     </div>
                     <div id='sliderContainer8'>
+                        <p>Importance Width Weight</p>
                         <div id='sliderValueEight'/>
                     </div>
                 </div>
