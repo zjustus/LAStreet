@@ -3,9 +3,14 @@ import React, {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 import * as d3Slider from 'd3-simple-slider';
 import Select, {components} from "react-select";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import './streetmap.css';
+import { brush } from 'd3';
 // import { Dropdown } from './dropdown';
 
-
+var get_brushed_streets = [];
 function Chart() {
 
 
@@ -965,9 +970,8 @@ function Chart() {
         }
 
         function displayTable() {
-
-            var selected_region = [];
             var brushed_streets = [];
+            var selected_region = [];
 
             // disregard brushes w/o selections  
             if (!d3.event.selection) return;
@@ -1016,6 +1020,7 @@ function Chart() {
                 d3.select('#mapContainer').select('[id="selected_streets"]')
                 .remove();
 
+                console.log(brushed_streets);
                 d3.select('#mapContainer')
                 .select('svg')
                 .append('g')
@@ -1040,6 +1045,29 @@ function Chart() {
                         .style("stroke", "blue")
                         .style('stroke-width', '15px')
                 });
+
+                var testsvg = d3.select('.leaflet-overlay-pane')
+                .append('svg').attr('width', mapH).attr('height', mapH);
+
+                // testsvg.selectAll("path")
+                // .data(brushed_streets)
+                // .join('path')
+                // .attr('d', geoGenerator)
+                // .attr('r', 12)
+                // .style('stroke-width', '30px')
+                // .attr('fill', 'red');
+
+                testsvg
+                .append('g')
+                .selectAll("path")
+                .data(brushed_streets)
+                .join('path')
+                .attr("fill", "blue")
+                .style("stroke", "blue")
+                .style('r', 5)
+                .style('stroke-width', '10px') //FIX: when we zoom in, the red line should change size as zoom scale
+                .attr('d', geoGenerator)
+
             } else {
                 //clear all selected streets in map
                 brushed_streets = [];
@@ -1047,6 +1075,9 @@ function Chart() {
                 .select('[id="selected_streets"]')
                 .remove();
             }
+
+            get_brushed_streets = [1];
+            console.log(get_brushed_streets);
 
             if (d_brushed.length > 0) {
                 //clear all displayed selected dots
@@ -1158,7 +1189,33 @@ function Chart() {
         { value: 'lowincome', label: 'Low Income' }
     ];
 
+    //leaflet map
+    const position = [34.06, -118.4];
+    const icon = L.icon({
+        iconSize: [25, 41],
+        iconAnchor: [10, 41],
+        popupAnchor: [2, -40],
+        iconUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png"
+    });
+
+    var arrCoordinates = [
+        [-118.4452, 34.0689],
+        [-118.3, 34.06],
+        [-118.4, 34.06]
+    ];
+
     
+    function MultipleMarkers() {
+        return arrCoordinates.map((coordinate, index) => {
+          return <Marker key={index} position={[coordinate[1], coordinate[0]]} icon={icon}>
+                      <Popup>
+                          This is {coordinate[0]}, {coordinate[1]}.
+                          {get_brushed_streets}
+                      </Popup>
+          </Marker>;
+        });
+    }
     //draw grid lines if you want
 
     return (
@@ -1225,6 +1282,13 @@ function Chart() {
             <button id='switchModeButton'>Tooltip mode</button>
             <div id='container'>
             </div>
+            <MapContainer center={position} zoom={8} style={{ height: "100vh" }}>
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <MultipleMarkers />
+            </MapContainer>
         </div>
     );
 

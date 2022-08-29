@@ -196,7 +196,7 @@ function Documentation () {
                     <h3>The following figure shows the rating curves for all sub-ratings except PCI:</h3>
                     <br></br>
                     <br></br>
-                <img src={process.env.PUBLIC_URL+'images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
+                    <img src={process.env.PUBLIC_URL+'images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
                 </div>
             </div>
         </div>

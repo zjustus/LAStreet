@@ -4,6 +4,7 @@ import Navbar from '../navbar';
 import Chart from './chart';
 import { Button } from '../button';
 import Map from './map';
+import StreetMap from './streetmap';
 
 function Application () {
     return (
@@ -16,9 +17,11 @@ function Application () {
                     <Chart/>
                 </div>
                 <div className='map'>
-                    <Map/>
+                    {/* <StreetMap/> */}
+                    {/* <InteractMap/> */}
                 </div>
             </div>
+            <Map/>
         </div>
     );
 }
