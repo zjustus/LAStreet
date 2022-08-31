@@ -2,6 +2,11 @@
     text-align: center;
 }
 
+#chartAndMap {
+    display: flex;
+    flex-direction: row;
+}
+
 div.tooltip {
     position: absolute;
     text-align: left;
@@ -75,6 +80,7 @@ div.tooltip {
 #filterFirstRow, #filterSecondRow {
     display: flex;
     flex-direction: row;
+    justify-content: center;
 }
 
 #multiselect1,
@@ -170,6 +176,7 @@ div.tooltip {
     display: flex;
     flex-direction: row;
     margin: 5px;
+    justify-content: center;
 }
 
 #sliderContainer1, 

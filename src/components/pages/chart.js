@@ -3,14 +3,16 @@ import React, {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 import * as d3Slider from 'd3-simple-slider';
 import Select, {components} from "react-select";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import * as d3Geo from "d3-geo";
 import './streetmap.css';
-import { brush } from 'd3';
+import { brush, svg } from 'd3';
 // import { Dropdown } from './dropdown';
 
 var get_brushed_streets = [];
+
 function Chart() {
 
 
@@ -20,6 +22,157 @@ function Chart() {
                 return response.json();
             });
     }
+
+    function MyMap() {
+
+        const streetMap = useMap();
+        console.log('map center: ', streetMap.getCenter());
+
+        getGeoData('/hillside_inventory_LA_centrality_full.geojson')
+        .then(function(data) {
+            const testsvg = d3.select(streetMap.getPanes().overlayPane).append('svg');
+            const g = testsvg.append('g').attr('class', 'leaflet-zoom-hide');
+    
+            var transform = d3.geoTransform({point: projectPoint});
+            var path = d3.geoPath().projection(transform);
+    
+            // streetMap.on('click', function(e) {
+            //     var latlng = e.latlng;
+            //     var layerpoint = e.layerPoint;
+            //     var pixelPosition = streetMap.latLngToLayerPoint(latlng);
+            //     alert(latlng + " " + layerpoint + " " + pixelPosition);
+            // })
+    
+            // create path elements for each of the features
+            const d3_features = g
+            .selectAll("path")
+            .data(data.features)
+            .enter()
+            .append("path");
+    
+            // streetMap.on("viewreset", reset);
+            streetMap.on("zoom", reset);
+    
+            reset();
+    
+            // fit the SVG element to leaflet's map layer
+            function reset() {
+                var bounds = path.bounds(data);
+                var topLeft = bounds[0];
+                var bottomRight = bounds[1];
+    
+                testsvg
+                .attr("width", bottomRight[0] - topLeft[0])
+                .attr("height", bottomRight[1] - topLeft[1])
+                .style("left", topLeft[0] + "px")
+                .style("top", topLeft[1] + "px");
+    
+                g.attr(
+                "transform",
+                "translate(" + -topLeft[0] + "," + -topLeft[1] + ")"
+                );
+    
+                // initialize the path data
+                d3_features
+                .attr("d", path)
+                .style("fill-opacity", 0.7)
+                .attr("fill", "none")
+                .style("stroke", "blue");
+            }
+    
+            // Use Leaflet to implement a D3 geometric transformation.
+            function projectPoint(x, y) {
+                const point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
+                this.stream.point(point.x, point.y);
+            }
+        })
+
+
+                // const geoShape = {
+        //     "type": "FeatureCollection",
+        //     "features": [
+        //       {
+        //         "type": "Feature",
+        //         "geometry": {
+        //           "type": "Polygon",
+        //           "coordinates": [
+        //             [
+        //                 [
+        //                   -118.4552,
+        //                   34.07516
+        //                 ],
+        //                 [
+        //                   -118.45484733581542,
+        //                   34.070471286884505
+        //                 ],
+        //                 [
+        //                   -118.4525728225708,
+        //                   34.07057793348581
+        //                 ],
+        //                 [
+        //                   -118.44746589660645,
+        //                   34.06670302079997
+        //                 ],
+        //                 [
+        //                   -118.44823837280273,
+        //                   34.06375228036416
+        //                 ],
+        //                 [
+        //                   -118.44167232513428,
+        //                   34.064036693555465
+        //                 ],
+        //                 [
+        //                   -118.43922615051268,
+        //                   34.06755622779842
+        //                 ],
+        //                 [
+        //                   -118.43866825103761,
+        //                   34.07057793348581
+        //                 ],
+        //                 [
+        //                   -118.43729496002196,
+        //                   34.072426453244354
+        //                 ],
+        //                 [
+        //                   -118.43883991241455,
+        //                   34.07576790583159
+        //                 ],
+        //                 [
+        //                   -118.43944072723389,
+        //                   34.078291681576104
+        //                 ],
+        //                 [
+        //                   -118.44403266906738,
+        //                   34.07676320665508
+        //                 ],
+        //                 [
+        //                   -118.44514846801756,
+        //                   34.07356398381666
+        //                 ],
+        //                 [
+        //                   -118.44918251037599,
+        //                   34.073599531400916
+        //                 ],
+        //                 [
+        //                   -118.45038414001463,
+        //                   34.075661265763955
+        //                 ],
+        //                 [
+        //                   -118.45386028289795,
+        //                   34.0770120300335
+        //                 ],
+        //                 [
+        //                   -118.45544815063477,
+        //                   34.07569681246808
+        //                 ]
+        //               ]
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   }
+    }
+    // const streetMap = useMap();
 
     getGeoData('/hillside_inventory_LA_centrality_full.geojson')
     .then(function(data) {
@@ -969,7 +1122,8 @@ function Chart() {
             }
         }
 
-        function displayTable() {
+        function DisplayTable() {
+            // const testMap = useMap();
             var brushed_streets = [];
             var selected_region = [];
 
@@ -1046,8 +1200,41 @@ function Chart() {
                         .style('stroke-width', '15px')
                 });
 
-                var testsvg = d3.select('.leaflet-overlay-pane')
-                .append('svg').attr('width', mapH).attr('height', mapH);
+                // const testsvg = d3.select('.leaflet-overlay-pane').append('svg');
+                // const g = testsvg.append('g').attr('class', 'leaflet-zoom-hide');
+
+                // const d3_features = g
+                // .selectAll("path")
+                // .data(brushed_streets)
+                // .enter()
+                // .append("path");
+
+                // var transform = d3.geoTransform({point: projectPoint});
+                // var path = d3.geoPath().projection(transform);
+                
+                // const testMap = useMap();
+                // console.log('map center: ', testMap.getCenter());
+                // const g = d3.select('.leaflet-overlay-pane').select('g');
+                // g.selectAll('path')
+                // .data(brushed_streets)
+                // .enter()
+                // .append('path');
+
+                // const point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
+                
+                // var transform = d3Geo.geoTransform({point: projectPoint});
+                // var path = d3Geo.geoPath().projection(transform);
+
+                // streetMap.on('viewreset', reset);
+                // reset();
+
+                // function projectPoint(x, y) {
+                //     var point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
+                //     this.stream.point(point.x, point.y);
+                // }
+
+                // var testsvg = d3.select('.leaflet-overlay-pane')
+                // .append('svg').attr('width', mapH).attr('height', mapH);
 
                 // testsvg.selectAll("path")
                 // .data(brushed_streets)
@@ -1057,16 +1244,21 @@ function Chart() {
                 // .style('stroke-width', '30px')
                 // .attr('fill', 'red');
 
-                testsvg
-                .append('g')
-                .selectAll("path")
-                .data(brushed_streets)
-                .join('path')
-                .attr("fill", "blue")
-                .style("stroke", "blue")
-                .style('r', 5)
-                .style('stroke-width', '10px') //FIX: when we zoom in, the red line should change size as zoom scale
-                .attr('d', geoGenerator)
+                // var transform = d3.geoEquirectangular()
+                // .scale(mapW * 100)
+                // .center([-118.4, 34.03])
+                // .translate([mapH/2, mapW/2]);
+                // var geoGenerator2 = d3.geoPath().projection(transform);
+
+                // g
+                // .selectAll("path")
+                // .data(brushed_streets)
+                // .join('path')
+                // .attr("fill", "blue")
+                // .style("stroke", "blue")
+                // .style('r', 5)
+                // .style('stroke-width', '10px') //FIX: when we zoom in, the red line should change size as zoom scale
+                // .attr('d', geoGenerator2)
 
             } else {
                 //clear all selected streets in map
@@ -1107,7 +1299,7 @@ function Chart() {
 
         var brush = d3.brush()
         .on("brush", highlightBrushedCircles)
-        .on("end", displayTable); 
+        .on("end", DisplayTable); 
 
         function allowBrush(activate) {
             if(activate == true) {
@@ -1140,7 +1332,7 @@ function Chart() {
                 .append('g')
                 .attr('id', 'selected_regions_title')
                 .append('text')
-                .style('fill', 'lightgrey')
+                .style('fisll', 'lightgrey')
                 .attr('x', 0)
                 .attr('y', h + 80)
                 .html('Brush to select:');
@@ -1190,7 +1382,7 @@ function Chart() {
     ];
 
     //leaflet map
-    const position = [34.06, -118.4];
+    const position = [34.03, -118.26];
     const icon = L.icon({
         iconSize: [25, 41],
         iconAnchor: [10, 41],
@@ -1218,6 +1410,7 @@ function Chart() {
     }
     //draw grid lines if you want
 
+    const center = [-41.2858, 174.7868];
     return (
         <div id='bigcontainer'>
             {/* <Select id='mySelect' 
@@ -1280,15 +1473,21 @@ function Chart() {
                 </div>
             </div>
             <button id='switchModeButton'>Tooltip mode</button>
-            <div id='container'>
+            <div id='chartAndMap'>
+                <div id='container'>
+                </div>
+                <MapContainer center={position} zoom={10} style={{ height: "100vh" }}>
+                    <MyMap/>
+                    <LayerGroup>
+                        {/* <MyMap/> */}
+                    </LayerGroup>
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {/* <MultipleMarkers /> */}
+                </MapContainer>
             </div>
-            <MapContainer center={position} zoom={8} style={{ height: "100vh" }}>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <MultipleMarkers />
-            </MapContainer>
         </div>
     );
 
