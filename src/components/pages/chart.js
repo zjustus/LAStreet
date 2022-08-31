@@ -48,7 +48,14 @@ function Chart() {
             .selectAll("path")
             .data(data.features)
             .enter()
-            .append("path");
+            .append("path")
+            .attr('class', function(d){
+                // console.log(d.properties.OBJECTID);
+                return "street" + d.properties.OBJECTID;
+            })
+            .style("fill-opacity", 0.7)
+            .attr("fill", "none")
+            .style("stroke", "none");
     
             // streetMap.on("viewreset", reset);
             streetMap.on("zoom", reset);
@@ -74,10 +81,10 @@ function Chart() {
     
                 // initialize the path data
                 d3_features
-                .attr("d", path)
-                .style("fill-opacity", 0.7)
-                .attr("fill", "none")
-                .style("stroke", "blue");
+                .attr("d", path);
+                // .style("fill-opacity", 0.7)
+                // .attr("fill", "none")
+                // .style("stroke", "blue");
             }
     
             // Use Leaflet to implement a D3 geometric transformation.
@@ -1125,6 +1132,7 @@ function Chart() {
         function DisplayTable() {
             // const testMap = useMap();
             var brushed_streets = [];
+            var brushed_streets2 = [];
             var selected_region = [];
 
             // disregard brushes w/o selections  
@@ -1152,7 +1160,9 @@ function Chart() {
                 })
                 streetIDS.forEach(function(streetid) {
                     if(streetid.OBJECTID === i){
-                        geometryArray.push(streetid.geometry);
+                        var temp = {'OBJECTID': streetid.OBJECTID,
+                                    'geometry': streetid.geometry};
+                        geometryArray.push(temp);
                     }
                 })
             })
@@ -1168,11 +1178,15 @@ function Chart() {
             if (geometryArray.length > 0) {
                 //clear all selected streets in map
                 brushed_streets = [];
+                brushed_streets2 = [];
                 //for each brushed street, display in map
                 geometryArray.forEach(i => brushed_streets.push(i));
+                geometryArray.forEach(i => brushed_streets2.push(i.geometry));
                 //clear out previous selected streets
                 d3.select('#mapContainer').select('[id="selected_streets"]')
                 .remove();
+                //clear out previous selected streets in leaflet
+                d3.selectAll("path[class*='street']").style('stroke', 'none');
 
                 console.log(brushed_streets);
                 d3.select('#mapContainer')
@@ -1180,7 +1194,7 @@ function Chart() {
                 .append('g')
                 .attr('id', 'selected_streets')
                 .selectAll("path")
-                .data(brushed_streets)
+                .data(brushed_streets2)
                 .join('path')
                 .attr("fill", "blue")
                 .style("stroke", "blue")
@@ -1200,65 +1214,14 @@ function Chart() {
                         .style('stroke-width', '15px')
                 });
 
-                // const testsvg = d3.select('.leaflet-overlay-pane').append('svg');
-                // const g = testsvg.append('g').attr('class', 'leaflet-zoom-hide');
-
-                // const d3_features = g
-                // .selectAll("path")
-                // .data(brushed_streets)
-                // .enter()
-                // .append("path");
-
-                // var transform = d3.geoTransform({point: projectPoint});
-                // var path = d3.geoPath().projection(transform);
-                
-                // const testMap = useMap();
-                // console.log('map center: ', testMap.getCenter());
-                // const g = d3.select('.leaflet-overlay-pane').select('g');
-                // g.selectAll('path')
-                // .data(brushed_streets)
-                // .enter()
-                // .append('path');
-
-                // const point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
-                
-                // var transform = d3Geo.geoTransform({point: projectPoint});
-                // var path = d3Geo.geoPath().projection(transform);
-
-                // streetMap.on('viewreset', reset);
-                // reset();
-
-                // function projectPoint(x, y) {
-                //     var point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
-                //     this.stream.point(point.x, point.y);
-                // }
-
-                // var testsvg = d3.select('.leaflet-overlay-pane')
-                // .append('svg').attr('width', mapH).attr('height', mapH);
-
-                // testsvg.selectAll("path")
-                // .data(brushed_streets)
-                // .join('path')
-                // .attr('d', geoGenerator)
-                // .attr('r', 12)
-                // .style('stroke-width', '30px')
-                // .attr('fill', 'red');
-
-                // var transform = d3.geoEquirectangular()
-                // .scale(mapW * 100)
-                // .center([-118.4, 34.03])
-                // .translate([mapH/2, mapW/2]);
-                // var geoGenerator2 = d3.geoPath().projection(transform);
-
-                // g
-                // .selectAll("path")
-                // .data(brushed_streets)
-                // .join('path')
-                // .attr("fill", "blue")
-                // .style("stroke", "blue")
-                // .style('r', 5)
-                // .style('stroke-width', '10px') //FIX: when we zoom in, the red line should change size as zoom scale
-                // .attr('d', geoGenerator2)
+                brushed_streets.forEach(function(i) {
+                    console.log(i.OBJECTID);
+                    var id = ".street" + i.OBJECTID;
+                    d3.select(id).style('stroke', 'blue')
+                            .attr("fill", "none")
+                            .style('stroke-width', '20px')
+                            .style("stroke-opacity", 0.7);
+                })
 
             } else {
                 //clear all selected streets in map
@@ -1266,10 +1229,12 @@ function Chart() {
                 d3.select('#mapContainer')
                 .select('[id="selected_streets"]')
                 .remove();
-            }
 
-            get_brushed_streets = [1];
-            console.log(get_brushed_streets);
+                //clear selected streets in leaflet
+                //select all paths that have the word street in the class name
+                d3.selectAll("path[class*='street']").style('stroke', 'none');
+
+            }
 
             if (d_brushed.length > 0) {
                 //clear all displayed selected dots
