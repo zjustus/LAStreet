@@ -16,12 +16,10 @@ function Application () {
                 <div className='chart'>
                     <Chart/>
                 </div>
-                <div className='map'>
-                    {/* <StreetMap/> */}
-                    {/* <InteractMap/> */}
-                </div>
             </div>
-            <Map/>
+            <div className='map'>
+                <Map/>
+            </div>
         </div>
     );
 }

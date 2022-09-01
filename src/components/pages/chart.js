@@ -11,8 +11,6 @@ import './streetmap.css';
 import { brush, svg } from 'd3';
 // import { Dropdown } from './dropdown';
 
-var get_brushed_streets = [];
-
 function Chart() {
 
 
@@ -22,6 +20,96 @@ function Chart() {
                 return response.json();
             });
     }
+
+    useEffect(() => {
+        drawMap();
+    }, []);
+
+    function drawMap() {
+        d3.select('#mapContainer')
+        .select('svg')
+        .remove();
+        d3.select('#mapContainer')
+        .select('button')
+        .remove();
+
+        d3.select('#mapResetButton')
+        .append('button')
+        .attr('id', 'resetButton')
+        .text('Reset Zoom')
+        .on('click', function() {
+            d3.select('#mapContainer')
+            .select('svg')
+            //maybe here
+            .call(zoom.transform, d3.zoomIdentity.scale(1));
+        });
+
+        var w = 500; //CHANGE mapW and mapH in chart.js if you change this
+        var h = 600;
+
+        var svg = d3.select('#mapContainer')
+                .append('svg')
+                .attr('width', w)
+                .attr('height', h)
+                .attr('style', 'outline: thick solid #C6ECFF')
+                // .attr('style', 'outline: thin solid lightgrey')
+
+        // Add a clipPath: everything out of this area won't be drawn.
+        var clip = svg.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("width", w )
+        .attr("height", h )
+        .attr("x", 0)
+        .attr("y", 0);
+
+        var projection = d3.geoEquirectangular()
+        .scale(w * 100)
+        .center([-118.4, 34.03])
+        .translate([w/2, h/2]);
+
+        var geoGenerator = d3.geoPath().projection(projection);
+
+        // d3.json('/hillside_inventory_LA_centrality_full.geojson')
+        d3.json('/lacounty.geojson')
+        .then((data) => {
+            // console.log(data);
+            svg.append('g')
+            .selectAll("path")
+            .data(data.features)
+            .join('path')
+            .attr("fill", "none")
+            .style("stroke", "white")
+            .style('stroke-width', '0.2px')
+            .attr('d', geoGenerator)
+            .on('mouseover', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "#C6ECFF")
+                    .style('stroke-width', '0.2px')
+            })
+            .on('mouseout', function (d, i) {
+                d3.select(this).transition()
+                    .duration('100')
+                    .style("stroke", "white")
+            });
+
+        });
+
+
+        var zoom = d3.zoom().filter(() => !d3.event.button)
+                    .scaleExtent([0.8, 20]) //unzoom x0.5, zoom x20
+                    .extent([[0, 0], [w, h]])
+                    .on("zoom", function() {
+                        svg.selectAll('g').attr('transform', d3.event.transform);
+                    })
+
+        var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
+        svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
+        
+    }
+
+
 
     function MyMap() {
 
@@ -1156,19 +1244,21 @@ function Chart() {
             coorArray.forEach(function(i) {
                 const streetIDS = data.features.map(function(i) {
                     return {'OBJECTID': i.properties.OBJECTID,
-                            'geometry':  i.geometry};
+                            'geometry':  i.geometry,
+                            'ST_NAME': i.ST_NAME};
                 })
                 streetIDS.forEach(function(streetid) {
                     if(streetid.OBJECTID === i){
                         var temp = {'OBJECTID': streetid.OBJECTID,
-                                    'geometry': streetid.geometry};
+                                    'geometry': streetid.geometry,
+                                    'ST_NAME': streetid.ST_NAME};
                         geometryArray.push(temp);
                     }
                 })
             })
 
-            var mapW = 600; //CHANGE this if you change the map container size in map.js
-            var mapH = 700;
+            var mapW = 500; //CHANGE this if you change the map container size in map.js
+            var mapH = 600;
             var projection = d3.geoEquirectangular()
             .scale(mapW * 100)
             .center([-118.4, 34.03])
@@ -1189,6 +1279,12 @@ function Chart() {
                 d3.selectAll("path[class*='street']").style('stroke', 'none');
 
                 console.log(brushed_streets);
+                console.log(brushed_streets2);
+                //tooltip for map
+                var tooltip2 = d3.select('#mapContainer').append('div')
+                .attr('class', 'tooltip')
+                .style('opacity', 0);
+
                 d3.select('#mapContainer')
                 .select('svg')
                 .append('g')
@@ -1196,22 +1292,35 @@ function Chart() {
                 .selectAll("path")
                 .data(brushed_streets2)
                 .join('path')
-                .attr("fill", "blue")
+                .attr("fill", "none")
                 .style("stroke", "blue")
                 .style('r', 5)
-                .style('stroke-width', '15px') //FIX: when we zoom in, the red line should change size as zoom scale
+                .style('stroke-width', '0.8px') //FIX: when we zoom in, the red line should change size as zoom scale
                 .attr('d', geoGenerator)
                 .on('mouseover', function (d, i) {
                     d3.select(this).transition()
                         .duration('100')
                         .style("stroke", "#B8EC87")
-                        .style('stroke-width', '1px')
+                        .style('stroke-width', '0.8px')
+                    //make div appear
+                    tooltip2.transition()
+                        .duration(100)
+                        .style('opacity', 1);
+                    //CHANGE tooltip fields
+                    tooltip2.html("Street Name: " + d + " ") //FIX THIS
+                        .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
+                        .style("top", (d3.event.pageY - 15) + "px");                    
                 })
                 .on('mouseout', function (d, i) {
                     d3.select(this).transition()
                         .duration('100')
                         .style("stroke", "blue")
-                        .style('stroke-width', '15px')
+                        .style('stroke-width', '0.8px');
+
+                    //make div disappear
+                    tooltip2.transition()
+                    .duration('200')
+                    .style('opacity', 0);
                 });
 
                 brushed_streets.forEach(function(i) {
@@ -1363,30 +1472,21 @@ function Chart() {
     ];
 
     
-    function MultipleMarkers() {
-        return arrCoordinates.map((coordinate, index) => {
-          return <Marker key={index} position={[coordinate[1], coordinate[0]]} icon={icon}>
-                      <Popup>
-                          This is {coordinate[0]}, {coordinate[1]}.
-                          {get_brushed_streets}
-                      </Popup>
-          </Marker>;
-        });
-    }
+    // function MultipleMarkers() {
+    //     return arrCoordinates.map((coordinate, index) => {
+    //       return <Marker key={index} position={[coordinate[1], coordinate[0]]} icon={icon}>
+    //                   <Popup>
+    //                       This is {coordinate[0]}, {coordinate[1]}.
+    //                       {get_brushed_streets}
+    //                   </Popup>
+    //       </Marker>;
+    //     });
+    // }
     //draw grid lines if you want
 
     const center = [-41.2858, 174.7868];
     return (
         <div id='bigcontainer'>
-            {/* <Select id='mySelect' 
-                    options={myOptions}
-                    isMulti
-                    closeMenuOnSelect={false}
-                    hideSelectedOptions={false}
-                    onChange={(event) => {
-                        console.log(event);
-                    }}
-            /> */}
             <div id='filterFamily'>
                 <div id='filterFirstRow'>
                     <div id='multiselect1'/>
@@ -1439,19 +1539,9 @@ function Chart() {
             </div>
             <button id='switchModeButton'>Tooltip mode</button>
             <div id='chartAndMap'>
-                <div id='container'>
-                </div>
-                <MapContainer center={position} zoom={10} style={{ height: "100vh" }}>
-                    <MyMap/>
-                    <LayerGroup>
-                        {/* <MyMap/> */}
-                    </LayerGroup>
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {/* <MultipleMarkers /> */}
-                </MapContainer>
+                <div id='container'></div>
+                <div id='mapResetButton'></div>
+                <div id='mapContainer'></div>
             </div>
         </div>
     );

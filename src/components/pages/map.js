@@ -3,99 +3,106 @@ import {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 import chart from './chart';
 
+import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
 function Map () {
 
-    useEffect(() => {
-        drawMap();
-    }, []);
-
-
-    function drawMap() {
-        d3.select('#mapContainer')
-        .select('svg')
-        .remove();
-        d3.select('#mapContainer')
-        .select('button')
-        .remove();
-
-        d3.select('#mapContainer')
-        .append('button')
-        .attr('id', 'resetButton')
-        .text('Reset Zoom')
-        .on('click', function() {
-            d3.select('#mapContainer')
-            .select('svg')
-            //maybe here
-            .call(zoom.transform, d3.zoomIdentity.scale(1));
-        });
-
-        var w = 600; //CHANGE mapW and mapH in chart.js if you change this
-        var h = 700;
-
-        var svg = d3.select('#mapContainer')
-                .append('svg')
-                .attr('width', w)
-                .attr('height', h)
-                .attr('style', 'outline: thin solid lightgrey')
-
-        // Add a clipPath: everything out of this area won't be drawn.
-        var clip = svg.append("defs").append("svg:clipPath")
-        .attr("id", "clip")
-        .append("svg:rect")
-        .attr("width", w )
-        .attr("height", h )
-        .attr("x", 0)
-        .attr("y", 0);
-
-        var projection = d3.geoEquirectangular()
-        .scale(w * 100)
-        .center([-118.4, 34.03])
-        .translate([w/2, h/2]);
-
-        var geoGenerator = d3.geoPath().projection(projection);
-
-        // d3.json('/hillside_inventory_LA_centrality_full.geojson')
-        d3.json('/lacounty.geojson')
-        .then((data) => {
-            // console.log(data);
-            svg.append('g')
-            .selectAll("path")
-            .data(data.features)
-            .join('path')
-            .attr("fill", "lightgrey")
-            .style("stroke", "lightgrey")
-            .style('stroke-width', '0.2px')
-            .attr('d', geoGenerator)
-            .on('mouseover', function (d, i) {
-                d3.select(this).transition()
-                    .duration('100')
-                    .style("stroke", "#C6ECFF")
-                    .style('stroke-width', '0.5px')
-            })
-            .on('mouseout', function (d, i) {
-                d3.select(this).transition()
-                    .duration('100')
-                    .style("stroke", "lightgrey")
+    function getGeoData(url) {
+        return fetch(url)
+            .then(function(response) {
+                return response.json();
             });
-
-        });
-
-
-
-        var zoom = d3.zoom().filter(() => !d3.event.button)
-                    .scaleExtent([0.8, 20]) //unzoom x0.5, zoom x20
-                    .extent([[0, 0], [w, h]])
-                    .on("zoom", function() {
-                        svg.selectAll('g').attr('transform', d3.event.transform);
-                    })
-
-        var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
-        svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
-        
     }
 
+    function MyMap() {
+
+        const streetMap = useMap();
+        console.log('map center: ', streetMap.getCenter());
+
+        getGeoData('/hillside_inventory_LA_centrality_full.geojson')
+        .then(function(data) {
+            const testsvg = d3.select(streetMap.getPanes().overlayPane).append('svg');
+            const g = testsvg.append('g').attr('class', 'leaflet-zoom-hide');
+    
+            var transform = d3.geoTransform({point: projectPoint});
+            var path = d3.geoPath().projection(transform);
+    
+            // streetMap.on('click', function(e) {
+            //     var latlng = e.latlng;
+            //     var layerpoint = e.layerPoint;
+            //     var pixelPosition = streetMap.latLngToLayerPoint(latlng);
+            //     alert(latlng + " " + layerpoint + " " + pixelPosition);
+            // })
+    
+            // create path elements for each of the features
+            const d3_features = g
+            .selectAll("path")
+            .data(data.features)
+            .enter()
+            .append("path")
+            .attr('class', function(d){
+                // console.log(d.properties.OBJECTID);
+                return "street" + d.properties.OBJECTID;
+            })
+            .style("fill-opacity", 0.7)
+            .attr("fill", "none")
+            .style("stroke", "none");
+    
+            // streetMap.on("viewreset", reset);
+            streetMap.on("zoom", reset);
+    
+            reset();
+    
+            // fit the SVG element to leaflet's map layer
+            function reset() {
+                var bounds = path.bounds(data);
+                var topLeft = bounds[0];
+                var bottomRight = bounds[1];
+    
+                testsvg
+                .attr("width", bottomRight[0] - topLeft[0])
+                .attr("height", bottomRight[1] - topLeft[1])
+                .style("left", topLeft[0] + "px")
+                .style("top", topLeft[1] + "px");
+    
+                g.attr(
+                "transform",
+                "translate(" + -topLeft[0] + "," + -topLeft[1] + ")"
+                );
+    
+                // initialize the path data
+                d3_features
+                .attr("d", path);
+                // .style("fill-opacity", 0.7)
+                // .attr("fill", "none")
+                // .style("stroke", "blue");
+            }
+    
+            // Use Leaflet to implement a D3 geometric transformation.
+            function projectPoint(x, y) {
+                const point = streetMap.latLngToLayerPoint(new L.LatLng(y, x));
+                this.stream.point(point.x, point.y);
+            }
+        })
+    }
+
+    const position = [34.03, -118.26];
+    const center = [-41.2858, 174.7868];
+    
+
     return (
-        <div id='mapContainer'/>
+        <MapContainer center={position} zoom={10} style={{ height: "100vh" }}>
+            <MyMap/>
+            <LayerGroup>
+            </LayerGroup>
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {/* <MultipleMarkers /> */}
+        </MapContainer>
     );
 }
 
