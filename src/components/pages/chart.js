@@ -51,7 +51,7 @@ function Chart() {
                 .append('svg')
                 .attr('width', w)
                 .attr('height', h)
-                .attr('style', 'outline: thick solid #C6ECFF')
+                .attr('style', 'outline: thick solid lightgrey')
                 // .attr('style', 'outline: thin solid lightgrey')
 
         // Add a clipPath: everything out of this area won't be drawn.
@@ -79,7 +79,7 @@ function Chart() {
             .data(data.features)
             .join('path')
             .attr("fill", "none")
-            .style("stroke", "white")
+            .style("stroke", "black")
             .style('stroke-width', '0.2px')
             .attr('d', geoGenerator)
             .on('mouseover', function (d, i) {
@@ -91,7 +91,7 @@ function Chart() {
             .on('mouseout', function (d, i) {
                 d3.select(this).transition()
                     .duration('100')
-                    .style("stroke", "white")
+                    .style("stroke", "black")
             });
 
         });
@@ -103,8 +103,8 @@ function Chart() {
                     .on("zoom", function() {
                         svg.selectAll('g').attr('transform', d3.event.transform);
                     })
-
         var svgZoom = d3.select('#mapContainer').select('svg').call(zoom);  //initiate zoom
+
         svgZoom.call(zoom.transform, d3.zoomIdentity.scale(1));
         
     }
@@ -422,7 +422,8 @@ function Chart() {
                 .attr('width', w)
                 .attr('height', h)
                 .attr('overflow', 'visible')
-                .attr('style', 'outline: thin solid lightgrey'); //border
+                .attr('style', 'outline: thick solid lightgrey') //border
+                .style('background', 'white');
     
         //set up scaling
         var xScale = d3.scaleLinear()
@@ -450,8 +451,9 @@ function Chart() {
         .text('Condition'); //CHANGE labeling
         svg.append('text')
         .attr('class', 'label')
-        .attr('y', h/2)
-        .attr('x', -120)
+        .attr('y', h - 500)
+        .attr('x', -250)
+        .attr('transform','rotate(-90)')
         .text('Importance'); //CHANGE labeling
 
         // Add a clipPath: everything out of this area won't be drawn.
@@ -1280,28 +1282,56 @@ function Chart() {
 
                 console.log(brushed_streets);
                 console.log(brushed_streets2);
-                //tooltip for map
-                var tooltip2 = d3.select('#mapContainer').append('div')
-                .attr('class', 'tooltip')
-                .style('opacity', 0);
+
+                //draw circles
+                var coordinates = [];
+                brushed_streets2.forEach(function(i) {
+                    //longitude
+                    var lon = i.coordinates[0][1];
+                    //latitude
+                    var lat = i.coordinates[0][0];
+                    var temp = {'longitude': lon,
+                                'latitude': lat};
+                    coordinates.push(temp);
+                })
 
                 d3.select('#mapContainer')
                 .select('svg')
                 .append('g')
                 .attr('id', 'selected_streets')
+                .selectAll('circle')
+                .data(coordinates)
+                .enter()
+                .append('circle')
+                .attr('cx', function(d) { 
+                    return projection([d.latitude, d.longitude])[0];
+                })
+                .attr('cy', function(d) {
+                    return projection([d.latitude, d.longitude])[1];
+                })
+                .attr('r', 8)
+                .style('opacity', 0.5)
+                .style('fill', '#B8EC87');
+
+                //tooltip for map
+                var tooltip2 = d3.select('#mapContainer').append('div')
+                .attr('class', 'tooltip')
+                .style('opacity', 0);
+
+                d3.select('[id="selected_streets"]')
                 .selectAll("path")
                 .data(brushed_streets2)
                 .join('path')
                 .attr("fill", "none")
                 .style("stroke", "blue")
                 .style('r', 5)
-                .style('stroke-width', '0.8px') //FIX: when we zoom in, the red line should change size as zoom scale
+                .style('stroke-width', '0.2px') //FIX: when we zoom in, the red line should change size as zoom scale
                 .attr('d', geoGenerator)
                 .on('mouseover', function (d, i) {
                     d3.select(this).transition()
                         .duration('100')
-                        .style("stroke", "#B8EC87")
-                        .style('stroke-width', '0.8px')
+                        .style("stroke", "grey")
+                        .style('stroke-width', '0.3px')
                     //make div appear
                     tooltip2.transition()
                         .duration(100)
@@ -1315,7 +1345,7 @@ function Chart() {
                     d3.select(this).transition()
                         .duration('100')
                         .style("stroke", "blue")
-                        .style('stroke-width', '0.8px');
+                        .style('stroke-width', '0.2px');
 
                     //make div disappear
                     tooltip2.transition()

@@ -1,3 +1,7 @@
+.application {
+    background-color: #C6ECFF;
+}
+
 .charts {
     display: flex;
     flex-direction: row;
@@ -16,8 +20,9 @@
 }
 
 .intro > h1 {
-    color: #ADD9F1CC;
+    color: black;
     max-width: 80%;
+    padding: 20px;
     text-align: center;
     font-size: 50px;
 }
@@ -29,7 +34,13 @@
 .map {
     display: flex;
     flex-direction: row;
+    padding: 40px;
+}
 
+.streetView {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .buttons {

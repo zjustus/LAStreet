@@ -5,6 +5,7 @@ import Chart from './chart';
 import { Button } from '../button';
 import Map from './map';
 import StreetMap from './streetmap';
+import RenderMapillary from './mapillary';
 
 function Application () {
     return (
@@ -19,6 +20,7 @@ function Application () {
             </div>
             <div className='map'>
                 <Map/>
+                <RenderMapillary/>  
             </div>
         </div>
     );

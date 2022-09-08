@@ -10,6 +10,7 @@
     "d3-geo": "^3.0.1",
     "d3-simple-slider": "^1.10.4",
     "leaflet": "^1.8.0",
+    "mapillary-js": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.0.2",

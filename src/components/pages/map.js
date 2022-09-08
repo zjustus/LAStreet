@@ -93,7 +93,7 @@ function Map () {
     
 
     return (
-        <MapContainer center={position} zoom={10} style={{ height: "100vh" }}>
+        <MapContainer center={position} zoom={10} style={{ height: "700px", width: "40%" }}>
             <MyMap/>
             <LayerGroup>
             </LayerGroup>
