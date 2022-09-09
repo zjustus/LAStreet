@@ -118,7 +118,7 @@ function Chart() {
 
         getGeoData('/hillside_inventory_LA_centrality_full.geojson')
         .then(function(data) {
-            const testsvg = d3.select(streetMap.getPanes().overlayPane).append('svg');
+            const testsvg = d3.select(streetMap.getPanes().overlayPane).append('svg').attr('id', 'svgleaflet');
             const g = testsvg.append('g').attr('class', 'leaflet-zoom-hide');
     
             var transform = d3.geoTransform({point: projectPoint});
@@ -141,8 +141,8 @@ function Chart() {
                 // console.log(d.properties.OBJECTID);
                 return "street" + d.properties.OBJECTID;
             })
-            .style("fill-opacity", 0.7)
             .attr("fill", "none")
+            .style("fill-opacity", 0.7)
             .style("stroke", "none");
     
             // streetMap.on("viewreset", reset);
@@ -1318,6 +1318,10 @@ function Chart() {
                 .attr('class', 'tooltip')
                 .style('opacity', 0);
 
+                var tooltip3 = d3.select('#mapContainer').append('div')
+                .attr('class', 'tooltip')
+                .style('opacity', 0);
+
                 d3.select('[id="selected_streets"]')
                 .selectAll("path")
                 .data(brushed_streets2)
@@ -1358,8 +1362,38 @@ function Chart() {
                     var id = ".street" + i.OBJECTID;
                     d3.select(id).style('stroke', 'blue')
                             .attr("fill", "none")
+                            // .attr("style", "pointer-events: visible;")
+                            .style("pointer-events", "visible")
                             .style('stroke-width', '20px')
-                            .style("stroke-opacity", 0.7);
+                            .style("stroke-opacity", 0.7)
+                            .on('click', function() {
+                                console.log(d3.select(this).attr('class'));
+                            })
+                            .on('mouseover', function (d, i) {
+                                d3.select(this).transition()
+                                    .duration('100')
+                                    .style("stroke", "red")
+                                    .style('stroke-width', '20px')
+                                //make div appear
+                                tooltip3.transition()
+                                    .duration(100)
+                                    .style('opacity', 1);
+                                //CHANGE tooltip fields
+                                tooltip3.html(d3.select(this).attr('class'))
+                                .attr('x', w + 50) // idky i cant change the x position
+                                .attr('y', h);                 
+                            })
+                            .on('mouseout', function (d, i) {
+                                d3.select(this).transition()
+                                    .duration('100')
+                                    .style("stroke", "blue")
+                                    .style('stroke-width', '20px');
+            
+                                //make div disappear
+                                tooltip3.transition()
+                                .duration('200')
+                                .style('opacity', 0);
+                            });
                 })
 
             } else {
@@ -1436,7 +1470,7 @@ function Chart() {
                 .append('g')
                 .attr('id', 'selected_regions_title')
                 .append('text')
-                .style('fisll', 'lightgrey')
+                .style('fill', 'grey')
                 .attr('x', 0)
                 .attr('y', h + 80)
                 .html('Brush to select:');
