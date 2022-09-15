@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/LAStreet/static/css/main.b567e021.css",
-    "main.js": "/LAStreet/static/js/main.fba6cb83.js",
+    "main.js": "/LAStreet/static/js/main.dc8e554d.js",
     "static/media/landing.png": "/LAStreet/static/media/landing.677d55e848124b9c4b58.png",
     "index.html": "/LAStreet/index.html",
     "main.b567e021.css.map": "/LAStreet/static/css/main.b567e021.css.map",
-    "main.fba6cb83.js.map": "/LAStreet/static/js/main.fba6cb83.js.map"
+    "main.dc8e554d.js.map": "/LAStreet/static/js/main.dc8e554d.js.map"
   },
   "entrypoints": [
     "static/css/main.b567e021.css",
-    "static/js/main.fba6cb83.js"
+    "static/js/main.dc8e554d.js"
   ]
 }
