@@ -22,7 +22,7 @@ function Map () {
         console.log('map center: ', streetMap.getCenter());
         
 
-        getGeoData('/hillside_inventory_LA_centrality_full.geojson')
+        getGeoData('/LAStreet/hillside_inventory_LA_centrality_full.geojson')
         .then(function(data) {
             const testsvg = d3.select(streetMap.getPanes().overlayPane).append('svg')
             .attr('id', 'svgleaflet');

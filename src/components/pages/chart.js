@@ -71,7 +71,7 @@ function Chart() {
         var geoGenerator = d3.geoPath().projection(projection);
 
         // d3.json('/hillside_inventory_LA_centrality_full.geojson')
-        d3.json('/lacounty.geojson')
+        d3.json('/LAStreet/lacounty.geojson')
         .then((data) => {
             // console.log(data);
             svg.append('g')
@@ -269,7 +269,7 @@ function Chart() {
     }
     // const streetMap = useMap();
 
-    getGeoData('/hillside_inventory_LA_centrality_full.geojson')
+    getGeoData('/LAStreet/hillside_inventory_LA_centrality_full.geojson')
     .then(function(data) {
 
         data.features.forEach(function(feature) {
