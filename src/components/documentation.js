@@ -16,7 +16,7 @@ function Documentation () {
                 <div className='streetDesign'>
                     <h1>Hillside Local</h1>
                     <div className='designInfo'>
-                        <img src={process.env.PUBLIC_URL+'images/Hillside Local Design.png'} alt='Hillside Local Design' width='350px'></img>
+                        <img src={'/LAStreet/images/Hillside Local Design.png'} alt='Hillside Local Design' width='350px'></img>
                             <p>Roadway Width: 36 ft. min <br></br>
                             Right-of-Way Width: 44ft<br></br>
                             On-Street Parking: both sides of street<br></br>
@@ -26,7 +26,7 @@ function Documentation () {
                 <div className='streetDesign'>
                     <h1>Local Street Standard</h1>
                     <div className='designInfo'>
-                        <img src={process.env.PUBLIC_URL+'images/Local Street Design.png'} alt='Local Street Design' width='270px'></img>
+                        <img src={'/LAStreet/images/Local Street Design.png'} alt='Local Street Design' width='270px'></img>
                         <p>Roadway Width: 36 ft.<br></br>
                         Right-of-Way Width: 60ft<br></br>
                         Typical Number of Lanes: 1 lane in each direction<br></br>
@@ -48,7 +48,7 @@ function Documentation () {
                 </div>
                 <br></br>
                 <div className='designInfo'>
-                    <img src={process.env.PUBLIC_URL+'images/Hillside Ordinance Layer.png'} alt='Hillside Ordinance Layer' width='27%'></img>
+                    <img src={'/LAStreet/images/Hillside Ordinance Layer.png'} alt='Hillside Ordinance Layer' width='27%'></img>
                     <p>As the project is only focusing on streets located in the Hillside Ordinance layer, 
                     only these streets will be analyzed in terms of a condition rating. 
                     The Hillside Ordinance layer can be viewed in the following figure.</p>
@@ -67,7 +67,7 @@ function Documentation () {
                             <li>Curbs Geohub for curb existence</li>
                         </ul>
                     </div>
-                    <img src={process.env.PUBLIC_URL+'images/Sidewalk Layers.png'} alt='Sidewalk Layers'width='500px'></img>
+                    <img src={'/LAStreet/images/Sidewalk Layers.png'} alt='Sidewalk Layers'width='500px'></img>
                     <p1>Sidewalk layers on Los Angeles GeoHub [2]</p1>
                 </div>
                 <br></br>
@@ -196,7 +196,7 @@ function Documentation () {
                     <h3>The following figure shows the rating curves for all sub-ratings except PCI:</h3>
                     <br></br>
                     <br></br>
-                    <img src={process.env.PUBLIC_URL+'images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
+                    <img src={'/LAStreet/images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
                 </div>
             </div>
         </div>
