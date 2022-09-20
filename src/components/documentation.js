@@ -16,7 +16,7 @@ function Documentation () {
                 <div className='streetDesign'>
                     <h1>Hillside Local</h1>
                     <div className='designInfo'>
-                        <img src={'/LAStreet/images/Hillside Local Design.png'} alt='Hillside Local Design' width='350px'></img>
+                        <img src={'/LAStreet/images/Hillside local design.png'} alt='Hillside Local Design' width='350px'></img>
                             <p>Roadway Width: 36 ft. min <br></br>
                             Right-of-Way Width: 44ft<br></br>
                             On-Street Parking: both sides of street<br></br>
@@ -26,7 +26,7 @@ function Documentation () {
                 <div className='streetDesign'>
                     <h1>Local Street Standard</h1>
                     <div className='designInfo'>
-                        <img src={'/LAStreet/images/Local Street Design.png'} alt='Local Street Design' width='270px'></img>
+                        <img src={'/LAStreet/images/Local street design.png'} alt='Local Street Design' width='270px'></img>
                         <p>Roadway Width: 36 ft.<br></br>
                         Right-of-Way Width: 60ft<br></br>
                         Typical Number of Lanes: 1 lane in each direction<br></br>
