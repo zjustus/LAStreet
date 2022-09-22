@@ -9,6 +9,7 @@ import L from 'leaflet';
 import * as d3Geo from "d3-geo";
 import './streetmap.css';
 import { brush, svg } from 'd3';
+import { type } from '@testing-library/user-event/dist/type';
 // import { Dropdown } from './dropdown';
 
 function Chart() {
@@ -1265,8 +1266,8 @@ function Chart() {
                 .attr('class', 'tooltip')
                 .style('opacity', 0);
 
-                var tooltip3 = d3.select('#mapContainer').append('div')
-                .attr('class', 'tooltip')
+                var tooltip3 = d3.select('#leafletTooltip').append('div')
+                .attr('class', 'tooltipTwo')
                 .style('opacity', 0);
 
                 console.log(brushed_streets2);
@@ -1328,9 +1329,18 @@ function Chart() {
                                     .duration(100)
                                     .style('opacity', 1);
                                 //CHANGE tooltip fields
-                                tooltip3.html(d3.select(this).attr('class'))
-                                .attr('x', w + 50) // idky i cant change the x position
-                                .attr('y', h);                 
+                                var temp = d3.select(this).attr('class');
+                                var temp2 = temp.slice(6, temp.length);
+                                var streetName;
+                                data.features.forEach(function(i) {
+                                    if(i.properties.OBJECTID == temp2) {
+                                        streetName = i.properties.ST_NAME;
+                                    }
+                                })
+
+                                tooltip3.html('Street name: ' + streetName)
+                                .attr('x', w - 50)
+                                .attr('y', h);              
                             })
                             .on('mouseout', function (d, i) {
                                 d3.select(this).transition()

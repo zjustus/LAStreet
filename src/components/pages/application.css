@@ -39,6 +39,10 @@
     padding: 40px;
 }
 
+#leafletTooltip {
+    background-color: red;
+}
+
 .streetView {
     display: flex;
     flex-direction: column;
