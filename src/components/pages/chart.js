@@ -70,6 +70,10 @@ function Chart() {
 
         var geoGenerator = d3.geoPath().projection(projection);
 
+        var tooltip0 = d3.select('#mapContainer').append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0);
+
         // d3.json('/hillside_inventory_LA_centrality_full.geojson')
         d3.json('/LAStreet/lacounty.geojson')
         .then((data) => {
@@ -87,11 +91,24 @@ function Chart() {
                     .duration('100')
                     .style("stroke", "#C6ECFF")
                     .style('stroke-width', '0.2px')
+                //make div appear
+                tooltip0.transition()
+                .duration(100)
+                .style('opacity', 1);
+                //CHANGE tooltip fields
+                console.log(d);
+                tooltip0.html("Street Name: " + d.properties.ST_NAME + " ") //FIX THIS
+                    .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
+                    .style("top", (d3.event.pageY - 15) + "px");  
             })
             .on('mouseout', function (d, i) {
                 d3.select(this).transition()
                     .duration('100')
                     .style("stroke", "black")
+                //make div disappear
+                tooltip0.transition()
+                .duration('200')
+                .style('opacity', 0);
             });
 
         });
@@ -1167,7 +1184,8 @@ function Chart() {
                 const streetIDS = data.features.map(function(i) {
                     return {'OBJECTID': i.properties.OBJECTID,
                             'geometry':  i.geometry,
-                            'ST_NAME': i.ST_NAME};
+                            'ST_NAME': i.properties.ST_NAME
+                        };
                 })
                 streetIDS.forEach(function(streetid) {
                     if(streetid.OBJECTID === i){
@@ -1178,6 +1196,8 @@ function Chart() {
                     }
                 })
             })
+
+            console.log(geometryArray);
 
             var mapW = 500; //CHANGE this if you change the map container size in map.js
             var mapH = 600;
@@ -1193,6 +1213,10 @@ function Chart() {
                 brushed_streets2 = [];
                 //for each brushed street, display in map
                 geometryArray.forEach(i => brushed_streets.push(i));
+                geometryArray.forEach(function(i) {
+                    var temp = i.ST_NAME;
+                    i.geometry['ST_NAME'] = temp;
+                });
                 geometryArray.forEach(i => brushed_streets2.push(i.geometry));
                 //clear out previous selected streets
                 d3.select('#mapContainer').select('[id="selected_streets"]')
@@ -1206,10 +1230,13 @@ function Chart() {
                 //draw circles
                 var coordinates = [];
                 brushed_streets2.forEach(function(i) {
+                    console.log(i);
                     //longitude
                     var lon = i.coordinates[0][1];
+                    // var lon = i.geometry.coordinates[0][1];
                     //latitude
                     var lat = i.coordinates[0][0];
+                    // var lat = i.geometry.coordinates[0][0];
                     var temp = {'longitude': lon,
                                 'latitude': lat};
                     coordinates.push(temp);
@@ -1242,6 +1269,7 @@ function Chart() {
                 .attr('class', 'tooltip')
                 .style('opacity', 0);
 
+                console.log(brushed_streets2);
                 d3.select('[id="selected_streets"]')
                 .selectAll("path")
                 .data(brushed_streets2)
@@ -1261,7 +1289,8 @@ function Chart() {
                         .duration(100)
                         .style('opacity', 1);
                     //CHANGE tooltip fields
-                    tooltip2.html("Street Name: " + d + " ") //FIX THIS
+                    console.log(d);
+                    tooltip2.html("Street Name: " + d.ST_NAME + " ") //FIX THIS
                         .style("left", (d3.event.pageX + 15) + "px") //adjust these numbers for tooltip location
                         .style("top", (d3.event.pageY - 15) + "px");                    
                 })
