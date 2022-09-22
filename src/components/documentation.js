@@ -505,6 +505,67 @@ function Documentation () {
                     </div>
                 </div>
 
+                <h2>Importance (Combined Centrality)</h2>
+                <p>Same as the combined condition rating, the combined importance rating is a linear combination of sub-centralities. 
+                    For every cost type (distance, travel time, width, population) a full centrality analysis is performed. 
+                    Based on these sub-centralities C and chosen weights w, the combined centrality can be calculated by the following formula. 
+                    We denote this combined centrality as importance.
+                </p>
+
+                <div className='formula'>
+                    <h3>Importance=C<span id="sub">distance</span>*w<span id="sub">distance</span>
+                        +C<span id="sub">time</span>*w<span id="sub">time</span>
+                        +C<span id="sub">width</span>*w<span id="sub">width</span>
+                        +C<span id="sub">population</span>*w<span id="sub">population</span>
+                    </h3> 
+                </div> 
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p>As described earlier, the weights are free to choose based on the user's preferences. 
+                    For example, if the everyday traffic flow is important for the user, weights for travel time and population should be high. 
+                    Whereas, if police or ambulance operations are important for the user, weights for distance and width should be high.
+                </p>
+
+                <h2>Combining all information</h2>
+                <p>Hillside Street Prioritization Application shows a scatter plot to the user.
+                     Every point of this scatter plot represents a street section. 
+                     The location of the point indicates the street section's condition and importance, whereas the condition is described by the x-axis, and the importance is described by the y-axis.
+                      This scatter plot is changing when the user changes weights (Condition weights or Importance Weights). 
+                      The street sections in the top left corner can be described as the street sections with the highest importance and the worst condition.
+                </p>
+
+                <h2>Instructions:</h2>
+                <div className='instructions'  style={{marginLeft: '70px', marginTop: '-50px'}}>
+                    <ol>
+                    <li>Select target designations that you want to investigate in the "Select Designations"-option. For example: If you are only focusing on local streets, just select "Local Street-Standard" as a designation. You'll only receive local streets in the output.</li>
+                        <li>Select a target area. This can either be the northern, central, or southern part of Los Angeles. You are to select multiple areas.</li>
+                        <li>Select weights for all subcategories for importance and condition. For more information on the weights, see the documentation.</li>
+                        <li>Review the scatter plot in Tooltip mode, and draw your region of interest in Brush Mode</li>
+                        <li>After setting up your region of interest, check the result on the LA Streets Network plot on the right. You can change anything you want iteratively.</li>
+                    </ol>
+                </div>
+
+                
+
+                <h2>References</h2>
+
+                <div className='instructions'  style={{marginLeft: '70px', marginTop: '-50px'}}>
+                    <ul>
+                        <li><a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwi7s4DI7cv3AhW6IUQIHSdUAy4QFnoECA0QAQ&url=https%3A%2F%2Fplanning.lacity.org%2Fodocument%2Fc9596f05-0f3a-4ada-93aa-e70bbde68b0b%2FComplete_Street_Design_Guide.pdf&usg=AOvVaw2U1LY5i-CNH7cVImvTVj-W">[1]</a></li>
+                        <li><a href=" https://geohub.lacity.org/">[2]</a></li>
+                        <li><a href=" http://webspace.ship.edu/pgmarr/TransMeth/Lec%201-Network%20Measurements.pdf">[3]</a></li>
+                        <li>Freeman, Linton C. "A set of measures of centrality based on betweenness." Sociometry (1977): 35-41.</li>
+                        <li><a href="  https://en.wikipedia.org/wiki/Betweenness_centrality">[5]</a></li>
+                        <li><a href=" https://www.google.com/maps">[6]</a></li>
+                        <li><a href="  https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">[7]</a></li>
+                        <li><a href="  https://developers.google.com/maps/documentation/distance-matrix">[8]</a></li>
+                    </ul>
+                </div>
+            
             </div>
         </div>
     );
