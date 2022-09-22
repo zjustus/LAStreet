@@ -1148,12 +1148,17 @@ function Chart() {
 
             var d_brushed = [];
             var coorArray = [];
+            var totalMiles = 0;
             //THIS LINE
             d3.selectAll(".brushed").data()
             .filter(function(d) {
                 coorArray.push(d.OBJECTID);
-                d_brushed.push(d.ST_NAME);
-                d_brushed.push('ID: ' + d.OBJECTID); //CHANGE what part of data to print
+                // d_brushed.push(d.ST_NAME);
+                // d_brushed.push('ID: ' + d.OBJECTID); //CHANGE what part of data to print
+                totalMiles = totalMiles + parseFloat(d.Shape__Length);
+                totalMiles = Math.round(totalMiles * 1e4) / 1e4;
+                d_brushed.push("Total selected miles: " + Math.round((totalMiles / 5280) * 1e2) / 1e2);
+                d_brushed.push("Number of selected street sections: " + coorArray.length);
             });
             console.log(d_brushed);
 
@@ -1328,7 +1333,9 @@ function Chart() {
                 //clear all displayed selected dots
                 selected_region = [];
                 //for each brushed dot, add into display array
-                d_brushed.forEach(i => selected_region.push(i));
+                // d_brushed.forEach(i => selected_region.push(i));
+                selected_region.push(d_brushed[d_brushed.length - 1]);
+                selected_region.push(d_brushed[d_brushed.length - 2]);
                 d3.select('#selected_regions_title').select('text').remove();
                 d3.select('#selected_regions_title')
                 .append('text')
