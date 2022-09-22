@@ -1,5 +1,7 @@
 .application {
     background-color: #C6ECFF;
+    max-width: 100vw;
+    overflow: hidden;
 }
 
 .charts {

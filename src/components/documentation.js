@@ -198,6 +198,313 @@ function Documentation () {
                     <br></br>
                     <img src={'/LAStreet/images/Sub-ratings.jpg'} alt='Sub-Ratings for Street Width, Sidewalk, and Curb' width='80%'></img>
                 </div>
+
+                <h2>Condition (Combined Rating)</h2>
+                <p>The overall rating is a linear combination 
+             of all 4 categories and can be viewed in the following formula. The ratings
+             R are precalculated, whereas the weights w are free to choose
+             in the Hillside Street Prioritization Application. The more weight is assigned
+             to a certain sub-rating category, compared to the other ones, the more important
+             this sub-category becomes.</p>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p>For Example: If the width rating weight is chosen to be 1 and all other rating weights
+             are chosen to be 0, the full rating will just be based on the width of the street
+             compared to its designated width.</p>
+
+             <div className='formula'>
+                <h3>Condition=R<span id="sub">width</span>*w<span id="sub">width</span>
+                    +R<span id="sub">PCI<span id="super">2</span></span>*w<span id="sub">PCI</span>
+                    +R<span id="sub">Curb</span>*w<span id="sub">Curb</span>
+                    +R<span id="sub">Sidewalk</span>*w<span id="sub">Sidewalk</span>
+                </h3> 
+            </div> 
+
+            <br></br>
+            <br></br>
+            <br></br>
+
+             <h2>Importance Rating</h2>
+             <p>In the following paragraph, the importance metric will be described. 
+        To analyze the whole network from a mathematical perspective, we have transformed the
+        transportation network into a graph system. In this graph, all the road intersections
+        are considered nodes or vertices, and the roads are considered edges or links.
+            </p>
+            <br></br>
+            <br></br>
+            <br></br>
+
+            <p>The nodes and edges of this transportation graph satisfy the following criteria:</p>
+
+            <div className='greyBox' style={{marginLeft: '70px'}}>
+                    <ol>
+                        <li>The vertices must occur where more than 2 edges meet</li>
+                        <li>The endpoints of edges are vertices/nodes</li>
+                        <li>Nodes/vertices can occur in the middle of a link (then that link is separated into two links)</li>
+                    </ol>
+            </div>
+
+            <div className='thingsInColumn'>
+                <img src={'/LAStreet/images/Small Sample.jpg'} alt='Small Sample' width='350px'></img>
+                <p>Small sample graph to demonstrate the criteria</p>
+            </div>
+
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+
+            <p>The LA Streets Network in graph representation contains 50924 Nodes and 70983 Edges. The graph representation of the LA Streets Network is displayed in the following figure.</p>
+ 
+
+            <div className='thingsInColumn'>
+                <img src={'/LAStreet/images/LA Streets Network.jpg'} alt='LA Street Network' width='550px'></img>
+                <p>Graph representation of the LA Streets Network complete (left) and zoomed in (right) with nodes (red) and edges (blue)</p>
+            </div>
+
+
+            <h2>Definition of Importance</h2>
+                <p>The objective here is to find out the importance of roads -- in terms of graph theory, the importance of edges. 
+                    One good metric to find out important edges is “edge betweenness centrality” [4].
+                </p>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>   
+
+                <p>
+                    In graph theory, edge betweenness centrality is a measure of importance or centrality of edges in a graph based on shortest paths. For every pair of nodes in a connected graph, there exists at least one shortest path between the nodes/vertices such that either the number of edges that the path passes through (for unweighted graphs) or the sum of the costs of the edges (for weighted graphs) is minimized.
+                    The edge betweenness centrality for each edge is directly related to the number of the shortest paths that pass through this specific edge. [5]
+                </p>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>   
+
+                <p>
+                    One example of edge betweenness centrality is shown in the following Figure. 
+                    In this graph, the most important link is highlighted in red as the most shortest paths pass through this link/edge.
+                </p>
+
+                <div className='thingsInColumn'>
+                    <img src={'/LAStreet/images/Example Network.jpg'} alt='Example Network' width='550px'></img>
+                    <p>Example Network: The most important edge is highlighted</p>
+                </div>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>  
+                <br></br>
+                <br></br>
+
+                <p>The mathematical expression for edge betweenness centrality is as follows:</p>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <p>Betweenness centrality of an edge e is the sum of the fraction of all-pairs shortest paths that pass through e. 
+                    In other words, we find the shortest path from every node to every node in the whole network and for every edge,
+                     we count how many shortest paths pass through it. The edges with more shortest paths passing through it are getting a higher betweenness centrality value and hence, 
+                     are more important.
+                </p>
+
+
+                <div className='thingsInColumn'>
+                    <img src={'/LAStreet/images/Centrality Of An Edge.jpg'} alt='Centrality of An Edge' width='550px'></img>
+                </div>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+
+                <p>The following two figures highlight some of the most important streets in the LA street network, when importance is purely defined by betweenness centrality.</p>
+                <div className='thingsInColumn'>
+                    <img src={'/LAStreet/images/LA Road Network.jpg'} alt='LA Road Network' width='250px'></img>
+                    <br></br>
+                    <p>Important streets in Los Angeles based on betweenness centrality</p>
+                </div>
+                <br></br>
+                <br></br>
+                <div className='thingsInColumn'>
+                    <img src={'/LAStreet/images/Important Streets.jpg'} alt='Important streets in LA based on betweenness centrality' width='450px'></img>
+                    <br></br>
+                    <p>Important streets in Los Angeles based on betweenness centrality in Google Maps [6]</p>
+                </div>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+
+                <p>Following, we briefly discuss the concept of the shortest path – which is the basis of calculating the edge betweenness centrality. 
+                    Assuming we have a graph like it's shown in the following figure. Each edge in this graph has an assigned cost that can be described for example by distance or travel time. 
+                    The shortest path from node i to node j will always be the path that accumulates the least costs while traveling.
+                </p>
+
+                <div className='thingsInColumn'>
+                    <img src={'/LAStreet/images/Weighted Graph.jpg'} alt='Weighted Graph' width='350px'></img>
+                    <br></br>
+                    <p>Weighted graph (graph with assigned costs for every edge)</p>
+                </div>
+
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+
+                <p>The following table shows the costs for different paths from node A to node B.
+                    From this table, it can be seen that the A-D-C-B accumulates the least amount of cost when traveling from node A to B. 
+                    So, path A-D-C-B is considered to be the shortest path. To get more information to algorithmically find the shortest paths in a network, please refer to [7].
+                </p>
+
+
+                <table id="myTable">
+                <tr>
+                    <th>Path</th>
+                    <th>Cost</th>
+                </tr>
+                <tr>
+                    <td>A-B</td>
+                    <td>6 miles</td>
+                </tr>
+                <tr>
+                    <td>A-D-B</td>
+                    <td>7 miles</td>
+
+                </tr>
+                <tr>
+                    <td>A-D-C-B</td>
+                    <td>5 miles</td>
+                </tr>
+                </table>
+
+                <h2>Types of Costs</h2>
+                <p>Converting the LA Streets Network to a graph initially leads to receiving an unweighted graph (that has no costs assigned to any edges). 
+                    The graph representation of the LA Streets Network contains 50924 Nodes and 70983 Edges. 
+                    To assign costs to the edges, the following quantities are used:
+                </p>
+
+                <div className='typesOfCosts'>
+                    <div className='quantities'>
+                        <div className='quantityTitle'>
+                            Distance
+                        </div>
+                        <div className='quantityDescription'>
+                            The most intuitive way to describe the cost of traveling from one point to another might be the distance. 
+                            This distance can be measured for example in feet, meters, miles, or kilometers. 
+                            The cost will be proportionally dependent on the distance.
+                        </div>
+                    </div>
+                    <div className='quantities'>
+                        <div className='quantityTitle'>
+                            Travel Time:
+                        </div>
+                        <div className='quantityDescription'>
+                        As the pure distance does not consider any traffic information or maximum speed limit, travel time can be used as a cost in the network. 
+                        A cost assigned by travel time will serve well for daily traffic flow. The travel time can be measured for example in seconds or minutes. 
+                        The assigned cost is proportionally dependent on the travel time.
+                        </div>
+                    </div>      
+                    <div className='quantities'>
+                        <div className='quantityTitle'>
+                            Street Width
+                        </div>
+                        <div className='quantityDescription'>
+                        The street width is the only metric that is included in both, condition rating and importance rating. The street width is measured for example in feet. 
+                        When using the street width as a cost, wider streets get assigned lower costs. 
+                        In other words, street width and assigned cost behave inversely proportional.
+                        </div>
+                    </div>
+                    <div className='quantities'>
+                        <div className='quantityTitle'>
+                            Population:
+                        </div>
+                        <div className='quantityDescription'>
+                        Another approach is to use population information as costs. Each edge has population information assigned that can be inverted to get a cost. 
+                        Same as with width, population information and assigned cost will behave proportionally. So, streets with a high population will have low costs. 
+                        This metric can be used to focus more on streets that are located in population-dense areas.
+                        </div>
+                    </div>          
+                </div>
+
+
+                <h2>Importance Data Acquisition</h2>    
+                <p>Following, the data acquisition for all importance metrics is described.</p>
+
+                <div className='importanceMetrics'>
+                    <div className='metrics'>
+                        <div className='metricTitle'>
+                            Distance and Travel Time:
+                        </div>
+                        <div className='metricDescription'>
+                            Distance and travel time information was collected by using Google Distance Matrix API [8]. 
+                            In total, 70983 requests have been made, to receive travel time and distance information for every edge in the graph, using the two connecting node coordinates of each edge as an input. 
+                            This procedure is equivalent to asking Google Maps to give travel time information from every intersection in Los Angeles to its neighboring intersections. The following figure shows the output for one particular request, compared to an equivalent google maps request.
+                        </div>
+                        <br></br>
+                        <div className='thingsInColumn'>
+                            <img src={'/LAStreet/images/Google Maps Request.jpg'} alt='Google Maps Request' width='850px'></img>
+                            <br></br>
+                            <p>Google Maps [6] request (left) and Google Distance Matrix API [8] request (right)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='importanceMetrics'>
+                    <div className='metrics'>
+                        <div className='metricTitle'>
+                            Street Width
+                        </div>
+                        <div className='metricDescription'>
+                         Street width information is taken from StreetsLA GeoHub.
+                        </div>
+                    </div>
+                </div>
+
+                <div className='importanceMetrics'>
+                    <div className='metrics'>
+                        <div className='metricTitle'>
+                            Population
+                        </div>
+                        <div className='metricDescription'>
+                            Population information is pulled from Census Blocks 2020 GIS dataset on Los Angeles Geohub. 
+                            The dataset provides spatial population information in form of polygons. 
+                            The edges of these polygons usually overlap with the road network as shown in the following image.
+                        </div>
+                        <div className='thingsInColumn'>
+                            <img src={'/LAStreet/images/Census Blocks Layer.jpg'} alt='Google Maps Request' width='750px'></img>
+                            <br></br>
+                            <p>Census Blocks Layer on Los Angeles Geohub [2]</p>
+                        </div>
+                        <br></br>
+                        <div className='metricDescription'>
+                            To allocate population values to certain street sections, additional points in a 1-meter distance were added to each polygon edge. 
+                            Then, for each point, the closest street section was found. The total population is then divided into the neighboring sections, based on the number of closest points for each section.
+                             A sample calculation can be viewed in the following image. In this example, there are only two polygons containing the population. 
+                             The total population is assigned to the neighboring street segments, whereas longer edges receive larger shares of the total population. 
+                             Street sections can receive population shares from several polygons. These shares will be summed up.
+                        </div>
+                        <div className='thingsInColumn'>
+                            <img src={'/LAStreet/images/Population Allocation.jpg'} alt='Population allocation to street sections' width='650px'></img>
+                            <br></br>
+                            <p>Population allocation to street sections</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

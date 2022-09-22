@@ -77,6 +77,24 @@ div.tooltip {
     margin-left: -20px;
 }
 
+#scrollable-div {
+    background-color: transparent;
+    overflow-x: scroll;
+    /* overflow-y: hidden; */
+    white-space: nowrap;
+    margin: 20px;
+    text-align: justify;
+    padding: 20px;
+    width: 90vw;
+    height: 165px;
+    /* margin-bottom: -10px; */
+}
+
+#scrollable-content {
+    display: flex;
+    flex-direction: row;
+}
+
 #filterFamily {
     display: flex;
     flex-direction: column;
@@ -177,11 +195,11 @@ div.tooltip {
     margin-left: -20px; */
 }
 
-#sliderFirstRow, #sliderSecondRow {
+#sliderFirstRow {
     display: flex;
     flex-direction: row;
-    margin: 5px;
-    justify-content: center;
+    /* margin: 2px; */
+    /* justify-content: center; */
 }
 
 #sliderContainer1, 
@@ -198,13 +216,14 @@ div.tooltip {
     align-items: center;
     font-size: small;
     margin-left: 20px;
+    margin-bottom: -50px;
 }
 
 #sliderContainer1 p, 
 #sliderContainer2 p, 
 #sliderContainer3 p,
 #sliderContainer4 p {
-    font-size: 12px;
+    font-size: 11px;
     color: grey;
 }
 
@@ -224,6 +243,6 @@ div.tooltip {
 #sliderValueSix,
 #sliderValueSeven,
 #sliderValueEight {
-    height: 3px;
+    height: 1px;
     color: grey;
 }

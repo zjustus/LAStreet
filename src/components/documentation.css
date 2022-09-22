@@ -136,7 +136,7 @@
 }
 
 .thingsInColumn > img:hover {
-    width: 60%;
+    width: 40%;
 }
 
 .greenBox {
@@ -193,5 +193,71 @@ font-weight:normal;
 }
 .ratingDescription {
     font-size: 20px;
+    line-height: 24px;
+}
+
+.formula {
+    font-style: italic;
+    font-size: 25px;
+    text-align: center;
+}
+
+#sub{
+    vertical-align: sub;
+    font-size: medium;
+}
+#super{  
+    vertical-align:super;  
+    font-size: medium;  
+}  
+
+.centerImage {
+    display: flex;
+    justify-content: center;
+}
+
+.typesOfCosts {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.quantities {
+    background-color: rgba(184, 236, 135, 0.5);
+    padding: 20px;
+    border-radius: 30px;
+    width: 85%;
+    margin: 10px;
+}
+.quantityTitle {
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+.quantityDescription {
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.importanceMetrics {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.metrics {
+    background-color: rgba(184, 236, 135, 0.5);
+    padding: 20px;
+    border-radius: 30px;
+    width: 85%;
+    margin: 10px;
+}
+.metricTitle {
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px;
+}
+.metricDescription {
+    font-size: 18px;
     line-height: 24px;
 }

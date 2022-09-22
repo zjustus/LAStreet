@@ -181,91 +181,6 @@ function Chart() {
                 this.stream.point(point.x, point.y);
             }
         })
-
-
-                // const geoShape = {
-        //     "type": "FeatureCollection",
-        //     "features": [
-        //       {
-        //         "type": "Feature",
-        //         "geometry": {
-        //           "type": "Polygon",
-        //           "coordinates": [
-        //             [
-        //                 [
-        //                   -118.4552,
-        //                   34.07516
-        //                 ],
-        //                 [
-        //                   -118.45484733581542,
-        //                   34.070471286884505
-        //                 ],
-        //                 [
-        //                   -118.4525728225708,
-        //                   34.07057793348581
-        //                 ],
-        //                 [
-        //                   -118.44746589660645,
-        //                   34.06670302079997
-        //                 ],
-        //                 [
-        //                   -118.44823837280273,
-        //                   34.06375228036416
-        //                 ],
-        //                 [
-        //                   -118.44167232513428,
-        //                   34.064036693555465
-        //                 ],
-        //                 [
-        //                   -118.43922615051268,
-        //                   34.06755622779842
-        //                 ],
-        //                 [
-        //                   -118.43866825103761,
-        //                   34.07057793348581
-        //                 ],
-        //                 [
-        //                   -118.43729496002196,
-        //                   34.072426453244354
-        //                 ],
-        //                 [
-        //                   -118.43883991241455,
-        //                   34.07576790583159
-        //                 ],
-        //                 [
-        //                   -118.43944072723389,
-        //                   34.078291681576104
-        //                 ],
-        //                 [
-        //                   -118.44403266906738,
-        //                   34.07676320665508
-        //                 ],
-        //                 [
-        //                   -118.44514846801756,
-        //                   34.07356398381666
-        //                 ],
-        //                 [
-        //                   -118.44918251037599,
-        //                   34.073599531400916
-        //                 ],
-        //                 [
-        //                   -118.45038414001463,
-        //                   34.075661265763955
-        //                 ],
-        //                 [
-        //                   -118.45386028289795,
-        //                   34.0770120300335
-        //                 ],
-        //                 [
-        //                   -118.45544815063477,
-        //                   34.07569681246808
-        //                 ]
-        //               ]
-        //           ]
-        //         }
-        //       }
-        //     ]
-        //   }
     }
     // const streetMap = useMap();
 
@@ -1175,14 +1090,14 @@ function Chart() {
         var sliderValue7 = d3.select('#sliderValueSeven').append('g').append('text');
         var sliderValue8 = d3.select('#sliderValueEight').append('g').append('text');
 
-        d3.select('#sliderContainer1').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider1);
-        d3.select('#sliderContainer2').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider2);
-        d3.select('#sliderContainer3').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider3);
-        d3.select('#sliderContainer4').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider4);
-        d3.select('#sliderContainer5').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider5);
-        d3.select('#sliderContainer6').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider6);
-        d3.select('#sliderContainer7').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider7);
-        d3.select('#sliderContainer8').append('svg').attr('width', 150).attr('height', 80).append('g').attr('transform', 'translate(30,30)').call(slider8);
+        d3.select('#sliderContainer1').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider1);
+        d3.select('#sliderContainer2').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider2);
+        d3.select('#sliderContainer3').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider3);
+        d3.select('#sliderContainer4').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider4);
+        d3.select('#sliderContainer5').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider5);
+        d3.select('#sliderContainer6').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider6);
+        d3.select('#sliderContainer7').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider7);
+        d3.select('#sliderContainer8').append('svg').attr('width', 150).attr('height', 70).append('g').attr('transform', 'translate(30,30)').call(slider8);
 
         //BRUSH FEATURE
         function highlightBrushedCircles() {
@@ -1551,56 +1466,58 @@ function Chart() {
     const center = [-41.2858, 174.7868];
     return (
         <div id='bigcontainer'>
-            <div id='filterFamily'>
-                <div id='filterFirstRow'>
-                    <div id='multiselect1'/>
-                    <div id='multiselect2'/>
-                    <div id='multiselect3'/>
-                </div>
-                <div id='filterSecondRow'>
-                    <div id='multiselect4'/>
-                    <div id='multiselect5'/>
-                    <div id='multiselect6'/>
-                </div>
-            </div>
-            <div id='sliderFamily'>
-                <div id='sliderFirstRow'>
-                    <div id='sliderContainer1'>
-                        <p>Width Rating Weight</p>
-                        <div id='sliderValueOne'/>
-                    </div>
-                    <div id='sliderContainer2'>
-                        <p>PCI Rating Weight</p>
-                        <div id='sliderValueTwo'/>
-                    </div>
-                    <div id='sliderContainer3'>
-                        <p>Curb Rating Weight</p>
-                        <div id='sliderValueThree'/>
-                    </div>
-                    <div id='sliderContainer4'>
-                        <p>Sidewalk Rating Weight</p>
-                        <div id='sliderValueFour'/>
-                    </div>
-                </div>
-                <div id='sliderSecondRow'>
-                    <div id='sliderContainer5'>
-                        <p>Importance Distance Weight</p>
-                        <div id='sliderValueFive'/>
-                    </div>
-                    <div id='sliderContainer6'>
-                        <p>Importance Population Weight</p>
-                        <div id='sliderValueSix'/>
-                    </div>
-                    <div id='sliderContainer7'>
-                        <p>Importance Time Weight</p>
-                        <div id='sliderValueSeven'/>
-                    </div>
-                    <div id='sliderContainer8'>
-                        <p>Importance Width Weight</p>
-                        <div id='sliderValueEight'/>
-                    </div>
-                </div>
-            </div>
+                <div id='scrollable-div'>
+                    <div id='scrollable-content'>
+                        <div id='sliderFamily'>
+                                <div id='sliderFirstRow'>
+                                    <div id='sliderContainer1'>
+                                        <p>Width Rating Weight</p>
+                                        <div id='sliderValueOne'/>
+                                    </div>
+                                    <div id='sliderContainer2'>
+                                        <p>PCI Rating Weight</p>
+                                        <div id='sliderValueTwo'/>
+                                    </div>
+                                    <div id='sliderContainer3'>
+                                        <p>Curb Rating Weight</p>
+                                        <div id='sliderValueThree'/>
+                                    </div>
+                                    <div id='sliderContainer4'>
+                                        <p>Sidewalk Rating Weight</p>
+                                        <div id='sliderValueFour'/>
+                                    </div>
+                                    <div id='sliderContainer5'>
+                                        <p>Importance Distance Weight</p>
+                                        <div id='sliderValueFive'/>
+                                    </div>
+                                    <div id='sliderContainer6'>
+                                        <p>Importance Population Weight</p>
+                                        <div id='sliderValueSix'/>
+                                    </div>
+                                    <div id='sliderContainer7'>
+                                        <p>Importance Time Weight</p>
+                                        <div id='sliderValueSeven'/>
+                                    </div>
+                                    <div id='sliderContainer8'>
+                                        <p>Importance Width Weight</p>
+                                        <div id='sliderValueEight'/>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div id='filterFamily'>       
+                                <div id='filterFirstRow'>
+                                    <div id='multiselect1'/>
+                                    <div id='multiselect2'/>
+                                    <div id='multiselect3'/>
+                                </div>
+                                <div id='filterSecondRow'>
+                                    <div id='multiselect4'/>
+                                    <div id='multiselect5'/>
+                                    <div id='multiselect6'/>
+                                </div>
+                            </div>  
+                    </div>          
+                </div>   
             <button id='switchModeButton'>Tooltip mode</button>
             <div id='chartAndMap'>
                 <div id='container'></div>
