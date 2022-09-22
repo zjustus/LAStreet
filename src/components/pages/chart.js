@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as d3Geo from "d3-geo";
 import './streetmap.css';
-import { brush, svg } from 'd3';
+import { brush, sum, svg } from 'd3';
 import { type } from '@testing-library/user-event/dist/type';
 // import { Dropdown } from './dropdown';
 
@@ -285,7 +285,12 @@ function Chart() {
                 const RP = i['pci_rating'];
                 const RC = i['curb_rating'];
                 const RS = i['sidewalk_rating'];
-                const condition = RW * sliderInputArray['widthRW'] + RP * sliderInputArray['pciRW'] + RC * sliderInputArray['curbRW'] + RS * sliderInputArray['sidewalkRW'];
+
+                console.log(sliderInputArray['widthRW']);
+                console.log(sliderInputArray['pciRW']);
+                var sumUserinput = sliderInputArray['widthRW'] + sliderInputArray['pciRW'] + sliderInputArray['curbRW'] + sliderInputArray['sidewalkRW'];
+                console.log(sumUserinput);
+                const condition = RW * sliderInputArray['widthRW'] / sumUserinput + RP * sliderInputArray['pciRW'] / sumUserinput + RC * sliderInputArray['curbRW'] / sumUserinput + RS * sliderInputArray['sidewalkRW'] / sumUserinput;
                 i['condition'] = condition;
                 //Importance
                 const CD = i['centrality_distance'];
