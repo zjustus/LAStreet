@@ -21,9 +21,9 @@ function Application () {
             </div>
             <div className='map'>
                 <div id="leafletTooltip"></div>
-                <Map/>
+                {/* <Map/> */}
                 {/* <RenderMapillary/> */}
-                <Update/>
+                {/* <Update/> */}
             </div>
         </div>
     );
