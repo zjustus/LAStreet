@@ -1,6 +1,6 @@
 import React from 'react';
 import './application.css'
-import './filters'
+import Filters from '../filters'
 // import Navbar from '../navbar';
 // import Chart from './chart';
 // import { Button } from '../button';
