@@ -26,32 +26,29 @@ export default function Filters(){
 
     // const testing = "hello"
     function rangeInput(min, max, defaultValue, setValue){
-        const change = (e)=>{ 
-            defaultValue = e.target.value 
-            console.log("wee", defaultValue)
-        }
         return(
-            < input type="range" min={min} max={max} value={defaultValue} onChange={setValue}/>
+            < input type="range" min={min} max={max} value={defaultValue} onChange={(e) => setValue(e.target.value)}/>
         )
     }
 
     const [inputValues, setInputValues] = useState([0,20,30,40,60])
     const updateInput = (number, value) =>{
+        console.log("array slot: ", number, " | value: ", value);
+        const newArray = [...inputValues];
 
+        newArray[number] = value;
+        setInputValues(newArray);
     }
-
-    const updateValue = (y, x) => updateInput(10, y);
-    updateValue(5, updateInput)
     
 
     return (
         <div>
             <ul>
-                <li>{rangeInput(0, 100, inputValues[0], updateInput(0))}</li>
-                <li>{rangeInput(0, 100, inputValues[1], updateInput(1))}</li>
-                <li>{rangeInput(0, 100, inputValues[2], updateInput(2))}</li>
-                <li>{rangeInput(0, 100, inputValues[3], updateInput(3))}</li>
-                <li>{rangeInput(0, 100, inputValues[4], updateInput(4))}</li>
+                <li>{rangeInput(0, 100, inputValues[0], (x) => {updateInput(0,x)})}</li>
+                <li>{rangeInput(0, 100, inputValues[1], (x) => {updateInput(1,x)})}</li>
+                <li>{rangeInput(0, 100, inputValues[2], (x) => {updateInput(2,x)})}</li>
+                <li>{rangeInput(0, 100, inputValues[3], (x) => {updateInput(3,x)})}</li>
+                <li>{rangeInput(0, 100, inputValues[4], (x) => {updateInput(4,x)})}</li>
             </ul>
         </div>
     );
