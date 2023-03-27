@@ -15,7 +15,7 @@ export default function Filters(){
         .then(
             (result) =>{
                 setFilters(JSON.stringify(result));
-                // console.log(result);
+                console.log(result);
             },
             (error) =>{
                 console.log(error);
@@ -24,31 +24,26 @@ export default function Filters(){
 
     }, []);
 
-    // const testing = "hello"
+    // creates useState of functions
+    const [inputValues, setInputValues] = useState([0,20,30,40,60])
+    const updateInput = (number, value) =>{
+        const newArray = [...inputValues]; // clone old array
+        newArray[number] = value; // set value
+        setInputValues(newArray); // update array
+    }
+
+    // Creates an Input
     function rangeInput(min, max, defaultValue, setValue){
         return(
-            < input type="range" min={min} max={max} value={defaultValue} onChange={(e) => setValue(e.target.value)}/>
+            < input type="range" min={min} max={max} value={defaultValue} onChange={(e) => setValue(e.target.value)} />
         )
     }
 
-    const [inputValues, setInputValues] = useState([0,20,30,40,60])
-    const updateInput = (number, value) =>{
-        console.log("array slot: ", number, " | value: ", value);
-        const newArray = [...inputValues];
-
-        newArray[number] = value;
-        setInputValues(newArray);
-    }
-    
-
+    // Generate List of Inputs
     return (
         <div>
             <ul>
-                <li>{rangeInput(0, 100, inputValues[0], (x) => {updateInput(0,x)})}</li>
-                <li>{rangeInput(0, 100, inputValues[1], (x) => {updateInput(1,x)})}</li>
-                <li>{rangeInput(0, 100, inputValues[2], (x) => {updateInput(2,x)})}</li>
-                <li>{rangeInput(0, 100, inputValues[3], (x) => {updateInput(3,x)})}</li>
-                <li>{rangeInput(0, 100, inputValues[4], (x) => {updateInput(4,x)})}</li>
+                {inputValues.map((value, index) =>rangeInput(0, 100, value, (x) => updateInput(index,x)))}
             </ul>
         </div>
     );
