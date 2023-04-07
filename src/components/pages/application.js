@@ -7,6 +7,7 @@ import Map from './map';
 import StreetMap from './streetmap';
 import RenderMapillary from './mapillary';
 import Update from './updateMapillary';
+import CityMap from './cityMap';
 
 function Application () {
     return (

@@ -44,7 +44,7 @@ function Chart() {
             //maybe here
             .call(zoom.transform, d3.zoomIdentity.scale(1));
         });
-
+        
         var w = 500; //CHANGE mapW and mapH in chart.js if you change this
         var h = 600;
 
@@ -1497,8 +1497,8 @@ function Chart() {
 
     var arrCoordinates = [
         [-118.4452, 34.0689],
-        [-118.3, 34.06],
-        [-118.4, 34.06]
+        [-118.4, 34.06],
+        [-118.3, 34.06]
     ];
 
     
