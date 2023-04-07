@@ -8,6 +8,7 @@ import StreetMap from './streetmap';
 import RenderMapillary from './mapillary';
 import Update from './updateMapillary';
 import CityMap from './cityMap';
+import Scatter from './scatter';
 
 function Application () {
     return (
@@ -17,12 +18,13 @@ function Application () {
             </div>
             <div className='charts'>
                 <div className='chart'>
-                    <Chart/>
+                    {/* <Chart/> */}
+                    <Scatter/>
                 </div>
             </div>
             <div className='map'>
                 <div id="leafletTooltip"></div>
-                <Map/>
+                
                 {/* <RenderMapillary/> */}
                 <Update/>
             </div>
