@@ -10,12 +10,19 @@ import Filters from '../filters'
 // import Update from './updateMapillary';
 
 function Application () {
+
+    function updateDrawing(geoJson){
+        console.log("Hello World")
+        console.log(geoJson);
+    }
+
+
     return (
         <div className='application'>
             <div className='intro'>
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
-            <Filters /> 
+            <Filters callBack={updateDrawing}/> 
             <div className="data-selection">
                 {/* Plot Graph Goes Here */}
                 {/* Street Graph Goes Here */}
