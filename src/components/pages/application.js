@@ -27,8 +27,12 @@ function Application () {
                 {/* Plot Graph Goes Here */}
                 {/* Street Graph Goes Here */}
             </div>
-            {/* Map Overview goes here */}
-            {/* Street view goes here */}
+            <div className='map'>
+                <div id="leafletTooltip"></div>
+                {/* <Map/> */}
+                {/* <RenderMapillary/> */}
+                {/* <Update/> */}
+            </div>
         </div>
     );
 }

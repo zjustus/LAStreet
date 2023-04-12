@@ -2,6 +2,22 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Road Map
+## Filter.JS
+This React component will get a list of properties from `LAstreetAPI/filterfeatures` and display them in a list
+This will contain an update button that updates the URL with the latest filtered parameters.
+Will only add parameter to URL IF it has been changed from default.
+
+## ScatterGraph.js
+This React component will get a list of streets from `LastreetAPI/findFeatures` and display each feature as a point in a scatter plot
+the X axes of this graph will be Condition
+the Y axes of this graph will be Importance
+
+## Map thing??
+Displays the filtered streets in a map form?
+Further analysis is required
+
+
 ## Available Scripts
 
 In the project directory, you can run:
