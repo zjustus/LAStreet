@@ -1,29 +1,29 @@
 import './scatter.css';
-import {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 
-import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
 
 function Scatter(){ 
-
     
     let dataExample = [];
-
-
-//Removes error due to the variable LastSelection not getting used 
+    //Removes error due to the variable LastSelection not getting used 
     let lastSelection;
 
-    for (let i = 0; i < 10000; i++) {
-        const x = Math.floor(Math.random() * 999999) + 1;
-        const y = Math.floor(Math.random() * 999999) + 1;
+    //Points that will be selected 
+    let selectedPoints = [];
+
+    //Replace this section with the data from UCLA
+    for (let i = 0; i < 10; i++) {
+        const x = Math.floor(Math.random() * 20) + 1;
+        const y = Math.floor(Math.random() * 20) + 1;
+        console.log(x + " " + y);
         dataExample.push([x, y]);
+        
     }
 
-    const pointColor = '#3585ff'
 
+    //Characteristics of the graph
+    const pointColor = 'blue'
     const margin = { top: 20, right: 15, bottom: 60, left: 70 };
     const outerWidth = 800;
     const outerHeight = 600;
@@ -34,7 +34,8 @@ function Scatter(){
 
     let lastTransform = null;
 
-    // Init SVG
+
+    //Initialize svg (It is still needed to to draw out the scatter plot's axes)
     const svgChart = container.append('svg:svg')
         .attr('width', outerWidth)
         .attr('height', outerHeight)
@@ -42,7 +43,7 @@ function Scatter(){
         .append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    // Init Canvas
+    // Initialize the canvas, this is where the points will be placed on 
     const canvasChart = container.append('canvas')
         .attr('width', width)
         .attr('height', height)
@@ -63,11 +64,16 @@ function Scatter(){
             .call(zoom_function.transform, t)
     });
 
+    //Used to manipulate what is displayed on the scatterplot
     const context = canvasChart.node().getContext('2d');
 
-    // Init Scales
+    // Init Scales (.domain places the values from our data points on the plot)
     const x = d3.scaleLinear().domain([0, d3.max(dataExample, (d) => d[0])]).range([0, width]).nice();
+
+    //For the y axis the height and zero change because when using canvas the origin is on the top left rather than the bottom
     const y = d3.scaleLinear().domain([0, d3.max(dataExample, (d) => d[1])]).range([height, 0]).nice();
+
+
 
     // Init Axis
     const xAxis = d3.axisBottom(x);
@@ -92,21 +98,71 @@ function Scatter(){
         .attr('y', `${height + 40}`)
         .text('Condition');
 
-    // Draw plot on canvas
+
+    //Detects when user inputs a mouse click 
+    canvasChart.on('click', () => {
+        const mouseX = d3.event.offsetX - margin.left;
+        const mouseY = d3.event.offsetY - margin.top;
+
+        //Reverts pixels back to original position AKA untransformed
+        const untransformedX = Math.round(x.invert(mouseX) + 2); //Plus 2 is added because x is off by two points for some reason
+        const untransformedY = Math.round(y.invert(mouseY) - 1);
+
+        // console.log(d3.mouse(container.node()));
+        console.log("X: " + untransformedX + " Y: " + untransformedY);
+
+        //Uses find() to search the data example array, then it checks the first and second element of each value in the array.
+        //If both are equal the corresponding data point will bre returned. Current issue is that values in the arrays are whole
+        // And when you click a point it is a float; therefore, we must return the closest point to the area selected
+        //You guys may want to figure out how to select a point based on the circle created of it as opposed to distance 
+        //from the point's position. And of course make the point appear on its exact location rather than a rounded number
+        const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
+
+        //Checks to see if selected point is also in the original array
+        //If Point is in the array which it is obviously not
+        if (point) {
+            console.log("point: " + point);
+            const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
+            if (index > -1) {
+                selectedPoints.splice(index, 1);
+            } else {
+                selectedPoints.push(point);
+            }
+            draw(lastTransform);
+        }
+        else{
+            // console.log("point: " + [untransformedX, untransformedY]);
+
+            // selectedPoints.push([untransformedX, untransformedY]);
+            console.log(selectedPoints);
+        }
+    });
+
+
+
+
+
+    // Draw plot on canvas. Since canvas uses 'pixels' to dictate at what point an element is drawn, we need to convert the data points we have to 'pixels'
+    //Assign a value to each pixel is the next step
     function draw(transform) {
+
         lastTransform = transform;
 
         const scaleX = transform.rescaleX(x);
         const scaleY = transform.rescaleY(y);
-
         gxAxis.call(xAxis.scale(scaleX));
         gyAxis.call(yAxis.scale(scaleY));
-
+    
         context.clearRect(0, 0, width, height);
-
+    
         dataExample.forEach(point => {
             drawPoint(scaleX, scaleY, point, transform.k);
         });
+    
+        selectedPoints.forEach(point => {
+            drawPoint(scaleX, scaleY, point, transform.k);
+        });
+
     }
 
     // Initial draw made with no zoom
@@ -114,12 +170,14 @@ function Scatter(){
 
     function drawPoint(scaleX, scaleY, point, k) {
         context.beginPath();
-        context.fillStyle = pointColor;
+        context.fillStyle = selectedPoints.some(d => d[0] === point[0] && d[1] === point[1]) ? 'red' : pointColor;
         const px = scaleX(point[0]);
         const py = scaleY(point[1]);
 
         context.arc(px, py, 1.2 * k, 0, 2 * Math.PI, true);
         context.fill();
+        
+
     }
 
     // Zoom/Drag handler
@@ -134,7 +192,6 @@ function Scatter(){
     canvasChart.call(zoom_function);
 
     //Box Zoom
-
     const svgChartParent = d3.select('svg');
     const zoomButton = toolsList.select('#zoom').on('click', () => {
         toolsList.selectAll('.active').classed('active', false);
@@ -168,6 +225,7 @@ function Scatter(){
     function brush_startEvent() {
         const sourceEvent = d3.event.sourceEvent;
         const selection = d3.event.selection;
+        
         if (sourceEvent.type === 'mousedown') {
             brushStartPoint = {
                 mouse: {
@@ -267,6 +325,7 @@ function Scatter(){
             // Re-scale axis for the new transformation
             zx = t.rescaleX(x);
             zy = t.rescaleY(y);
+            
             // Call zoomFunction with a new transformation from the new scale and brush position.
             // To calculate the brush position we use the originalPoint in the new Axis Scale.
             // originalPoint it's always positive (because we're sure it's within the canvas).

@@ -10,6 +10,7 @@ import Update from './updateMapillary';
 import CityMap from './cityMap';
 import Scatter from './scatter';
 
+
 function Application () {
     return (
         <div className='application'>
