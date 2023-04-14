@@ -1,6 +1,8 @@
-import React from 'react';
+// import React from 'react';
+import { useEffect, useState } from "react";
 import './application.css'
 import Filters from '../filters'
+import ScatterPlot from '../scatterPlot';
 // import Navbar from '../navbar';
 // import Chart from './chart';
 // import { Button } from '../button';
@@ -10,20 +12,23 @@ import Filters from '../filters'
 // import Update from './updateMapillary';
 
 function Application () {
+    const [geoData, setGeoData] = useState([]);
 
-    function updateDrawing(geoJson){
-        console.log("Hello World")
-        console.log(geoJson);
+    function updateGeoData(geoDataNew){
+        console.log(geoDataNew);
+        setGeoData(geoDataNew)
     }
 
+    
 
     return (
         <div className='application'>
             <div className='intro'>
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
-            <Filters callBack={updateDrawing}/> 
+            <Filters callBack={updateGeoData}/> 
             <div className="data-selection">
+                <ScatterPlot geoData={geoData} />
                 {/* Plot Graph Goes Here */}
                 {/* Street Graph Goes Here */}
             </div>
