@@ -96,42 +96,7 @@ function Scatter(){
         .attr('x', `${width / 2}`)
         .attr('y', `${height + 40}`)
         .text('Condition');
-
-
-    //Detects when user inputs a mouse click 
-    // canvasChart.on('click', event => {
-    //     const mouseX = d3.event.offsetX;
-    //     const mouseY = d3.event.offsetY;
-
-    //     //Reverts pixels back to original position AKA untransformed
-    //     const untransformedX = x.invert(mouseX); 
-    //     const untransformedY = y.invert(mouseY);
-
-    //     console.log("X: " + untransformedX + " Y: " + untransformedY);
-
-    //     const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
-
-    //     //Checks to see if selected point is also in the original array
-    //     if (point) {
-    //         console.log("point: " + point);
-    //         const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
-    //         if (index > -1) {
-    //             selectedPoints.splice(index, 1);
-    //         } else {
-    //             selectedPoints.push(point);
-    //         }
-    //         draw(lastTransform);
-    //     }
-    //     else{
-    //         // console.log("point: " + [untransformedX, untransformedY]);
-
-    //         // selectedPoints.push([untransformedX, untransformedY]);
-    //         console.log(selectedPoints);
-    //     }
-    // });
-
-
-    //Gets the values between selected points may need to set 0 to smaller points
+    
     function getInBetweenValues(x0, y0, x1, y1) {
         let highlightedPoints = [];
         for(let i = 0; i < dataExample.length; i++){
@@ -341,30 +306,16 @@ function Scatter(){
             const originalPoint = [zx.invert(lastSelection.x1), zy.invert(lastSelection.y1)];
             console.log('Zoomed Values for original points ' + originalPoint);
             console.log(lastSelection);
-            const secondPoint = 
+             
             updatePoints(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
 
             // Calc scale mapping distance AxisX in width * k
-            // Example: Scale 1, width: 830, totalX: 415
-            // Result in a zoom of 2
             const t = d3.zoomIdentity.scale(((width * lastTransform.k) / totalX));
             // Re-scale axis for the new transformation
             zx = t.rescaleX(x);
             zy = t.rescaleY(y);
             
-            // Call zoomFunction with a new transformation from the new scale and brush position.
-            // To calculate the brush position we use the originalPoint in the new Axis Scale.
-            // originalPoint it's always positive (because we're sure it's within the canvas).
-            // We need to translate this originalPoint to [0,0]. So, we do (0 - position) or (position * -1)
-            // canvasChart
-            //     .transition()
-            //     .duration(200)
-            //     .ease(d3.easeLinear)
-            //     .call(zoom_function.transform,
-            //         d3.zoomIdentity
-            //             .translate(zx(originalPoint[0]) * -1, zy(originalPoint[1]) * -1)
-            //             .scale(t.k));
-            // lastSelection = null;
+
         } else {
             brushSvg.call(brush.move, null);
         }
