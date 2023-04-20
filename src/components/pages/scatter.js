@@ -13,7 +13,7 @@ function Scatter(){
     let selectedPoints = [];
 
     //Replace this section with the data from UCLA Currently returns random points from 0 to 1 just like Condition and Importance
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 2000; i++) {
         const x = Math.random();
         const y = Math.random();
         // console.log(x + " " + y);
@@ -138,17 +138,15 @@ function Scatter(){
     function getInBetweenValues(x0, y0, x1, y1) {
 
         console.log('Checking values between x0: ' + x0 + ' y0: ' + y0 + ' x1: '+ x1 + ' y1: ' + y1);
-        // let highlightedPoints = [];
+        let highlightedPoints = [];
         for(let i = 0; i < dataExample.length; i++){
             console.log(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1));
 
-
-            console.log(y0 + ' is greater than or equal to ' + dataExample[i][1] + ' which is greater than ' + y1);
             // console.log(y0 >= dataExample[i][1] >= y1);
 
             if(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1)){
-                console.log(dataExample[i] + ' FUCK YEAH');
-                selectedPoints.push(dataExample[i]);
+                console.log(dataExample[i] + ' OH YEAH');
+                highlightedPoints.push(dataExample[i]);
             }
             
         }
@@ -157,7 +155,7 @@ function Scatter(){
         //     console.log('Selected: ' + highlightedPoints[i] );
         // }
 
-        // return highlightedPoints;
+        return highlightedPoints;
     }
 
 
@@ -215,9 +213,10 @@ function Scatter(){
         // if (point) {
         //     console.log("point: " + point);
 
-        selectedPoints.forEach(point => {
-            selectedPoints.splice(point, 1); 
-            selectedPoints.push(point);
+        colorPoints.forEach(point => {
+            if(selectedPoints.indexOf(point) === -1)selectedPoints.push(point);
+            // selectedPoints.splice(point, 1); 
+            // selectedPoints.push(point);
         });
         console.log(selectedPoints);
         // for(int i = 0; i < selectedPoints.length;i++){
@@ -357,7 +356,7 @@ function Scatter(){
 
             // console.log('Minimum X: ' + x.invert(minX) + ' Maximum X: ' + x.invert(maxX) + ' Minimum Y: '+   y.invert(minY) + ' Maximum Y: '  + y.invert(maxY));
 
-            // console.log(getInBetweenValues(x.invert(minX),y.invert(minY),x.invert(maxX),y.invert(maxY)));
+            console.log(getInBetweenValues(x.invert(minX),y.invert(minY),x.invert(maxX),y.invert(maxY)));
 
             lastSelection = { x1: minX, x2: maxX, y1: minY, y2: maxY };
         }
@@ -374,8 +373,10 @@ function Scatter(){
             // Calc distance on Axis-X to use in scale
             let totalX = Math.abs(lastSelection.x2 - lastSelection.x1);
 
+            
             // Get current point [x,y] on canvas
             const originalPoint = [zx.invert(lastSelection.x1), zy.invert(lastSelection.y1)];
+            console.log('Zoomed Values for original points ' + originalPoint);
             console.log(lastSelection);
             updatePoints(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
 
