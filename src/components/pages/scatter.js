@@ -1,6 +1,5 @@
 import './scatter.css';
 import * as d3 from 'd3';
-
 import 'leaflet/dist/leaflet.css';
 
 function Scatter(){ 
@@ -16,14 +15,12 @@ function Scatter(){
     for (let i = 0; i < 2000; i++) {
         const x = Math.random();
         const y = Math.random();
-        // console.log(x + " " + y);
         dataExample.push([x, y]);
         
     }
 
     //Ensures all data points are in order so that when it comes to find out which point is the closest to the clicked point this can be done more easily
     dataExample.sort();
-    console.log('Before Conversion: ' + dataExample[0]);
 
     //Characteristics of the graph
     const pointColor = 'blue'
@@ -136,25 +133,12 @@ function Scatter(){
 
     //Gets the values between selected points may need to set 0 to smaller points
     function getInBetweenValues(x0, y0, x1, y1) {
-
-        console.log('Checking values between x0: ' + x0 + ' y0: ' + y0 + ' x1: '+ x1 + ' y1: ' + y1);
         let highlightedPoints = [];
         for(let i = 0; i < dataExample.length; i++){
-            console.log(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1));
-
-            // console.log(y0 >= dataExample[i][1] >= y1);
-
             if(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1)){
-                console.log(dataExample[i] + ' OH YEAH');
                 highlightedPoints.push(dataExample[i]);
             }
-            
         }
-
-        // for(let i = 0; i < highlightedPoints.length; i++){
-        //     console.log('Selected: ' + highlightedPoints[i] );
-        // }
-
         return highlightedPoints;
     }
 
@@ -198,20 +182,8 @@ function Scatter(){
     }
 
     function updatePoints(colorPoints){
-        console.log('Im finally here');
-        // const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
-        // selectedPoints.splice(index, 1);
-
-        // selectedPoints.push(point);
-
-        // draw(lastTransform);
-
-
         // colorPoints
         //Checks to see if selected point is also in the original array
-        //If Point is in the array which it is obviously not
-        // if (point) {
-        //     console.log("point: " + point);
 
         colorPoints.forEach(point => {
             if(selectedPoints.indexOf(point) === -1)selectedPoints.push(point);
@@ -219,15 +191,6 @@ function Scatter(){
             // selectedPoints.push(point);
         });
         console.log(selectedPoints);
-        // for(int i = 0; i < selectedPoints.length;i++){
-        //     selectedPoints
-        // }
-        // const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
-        // if (index > -1) {
-        //     selectedPoints.splice(index, 1);
-        // } else {
-        //     selectedPoints.push(point);
-        // }
         draw(lastTransform);
         // }
     }
@@ -356,7 +319,7 @@ function Scatter(){
 
             // console.log('Minimum X: ' + x.invert(minX) + ' Maximum X: ' + x.invert(maxX) + ' Minimum Y: '+   y.invert(minY) + ' Maximum Y: '  + y.invert(maxY));
 
-            console.log(getInBetweenValues(x.invert(minX),y.invert(minY),x.invert(maxX),y.invert(maxY)));
+            // console.log(getInBetweenValues(x.invert(minX),y.invert(minY),x.invert(maxX),y.invert(maxY)));
 
             lastSelection = { x1: minX, x2: maxX, y1: minY, y2: maxY };
         }
@@ -378,6 +341,7 @@ function Scatter(){
             const originalPoint = [zx.invert(lastSelection.x1), zy.invert(lastSelection.y1)];
             console.log('Zoomed Values for original points ' + originalPoint);
             console.log(lastSelection);
+            const secondPoint = 
             updatePoints(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
 
             // Calc scale mapping distance AxisX in width * k
