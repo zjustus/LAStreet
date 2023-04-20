@@ -102,46 +102,43 @@ function Scatter(){
 
 
     //Detects when user inputs a mouse click 
-    canvasChart.on('click', event => {
-        const mouseX = d3.event.offsetX;
-        const mouseY = d3.event.offsetY;
+    // canvasChart.on('click', event => {
+    //     const mouseX = d3.event.offsetX;
+    //     const mouseY = d3.event.offsetY;
 
-        //Reverts pixels back to original position AKA untransformed
-        const untransformedX = x.invert(mouseX); 
-        const untransformedY = y.invert(mouseY);
+    //     //Reverts pixels back to original position AKA untransformed
+    //     const untransformedX = x.invert(mouseX); 
+    //     const untransformedY = y.invert(mouseY);
 
-        console.log("X: " + untransformedX + " Y: " + untransformedY);
+    //     console.log("X: " + untransformedX + " Y: " + untransformedY);
 
-        // getInBetweenValues(untransformedX, untransformedY);
+    //     const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
 
-        const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
+    //     //Checks to see if selected point is also in the original array
+    //     if (point) {
+    //         console.log("point: " + point);
+    //         const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
+    //         if (index > -1) {
+    //             selectedPoints.splice(index, 1);
+    //         } else {
+    //             selectedPoints.push(point);
+    //         }
+    //         draw(lastTransform);
+    //     }
+    //     else{
+    //         // console.log("point: " + [untransformedX, untransformedY]);
 
-        //Checks to see if selected point is also in the original array
-        //If Point is in the array which it is obviously not
-        if (point) {
-            console.log("point: " + point);
-            const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
-            if (index > -1) {
-                selectedPoints.splice(index, 1);
-            } else {
-                selectedPoints.push(point);
-            }
-            draw(lastTransform);
-        }
-        else{
-            // console.log("point: " + [untransformedX, untransformedY]);
-
-            // selectedPoints.push([untransformedX, untransformedY]);
-            console.log(selectedPoints);
-        }
-    });
+    //         // selectedPoints.push([untransformedX, untransformedY]);
+    //         console.log(selectedPoints);
+    //     }
+    // });
 
 
     //Gets the values between selected points may need to set 0 to smaller points
     function getInBetweenValues(x0, y0, x1, y1) {
 
         console.log('Checking values between x0: ' + x0 + ' y0: ' + y0 + ' x1: '+ x1 + ' y1: ' + y1);
-        let highlightedPoints = [];
+        // let highlightedPoints = [];
         for(let i = 0; i < dataExample.length; i++){
             console.log(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1));
 
@@ -151,16 +148,16 @@ function Scatter(){
 
             if(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1)){
                 console.log(dataExample[i] + ' FUCK YEAH');
-                highlightedPoints.push(dataExample[i]);
+                selectedPoints.push(dataExample[i]);
             }
             
         }
 
-        for(let i = 0; i < highlightedPoints.length; i++){
-            console.log('Selected: ' + highlightedPoints[i] );
-        }
+        // for(let i = 0; i < highlightedPoints.length; i++){
+        //     console.log('Selected: ' + highlightedPoints[i] );
+        // }
 
-        return highlightedPoints;
+        // return highlightedPoints;
     }
 
 
@@ -202,8 +199,38 @@ function Scatter(){
 
     }
 
-    function updatePoints(){
+    function updatePoints(colorPoints){
+        console.log('Im finally here');
+        // const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
+        // selectedPoints.splice(index, 1);
 
+        // selectedPoints.push(point);
+
+        // draw(lastTransform);
+
+
+        // colorPoints
+        //Checks to see if selected point is also in the original array
+        //If Point is in the array which it is obviously not
+        // if (point) {
+        //     console.log("point: " + point);
+
+        selectedPoints.forEach(point => {
+            selectedPoints.splice(point, 1); 
+            selectedPoints.push(point);
+        });
+        console.log(selectedPoints);
+        // for(int i = 0; i < selectedPoints.length;i++){
+        //     selectedPoints
+        // }
+        // const index = selectedPoints.findIndex(d => d[0] === untransformedX && d[1] === untransformedY);
+        // if (index > -1) {
+        //     selectedPoints.splice(index, 1);
+        // } else {
+        //     selectedPoints.push(point);
+        // }
+        draw(lastTransform);
+        // }
     }
 
     // Zoom/Drag handler
@@ -350,7 +377,7 @@ function Scatter(){
             // Get current point [x,y] on canvas
             const originalPoint = [zx.invert(lastSelection.x1), zy.invert(lastSelection.y1)];
             console.log(lastSelection);
-            console.log(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
+            updatePoints(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
 
             // Calc scale mapping distance AxisX in width * k
             // Example: Scale 1, width: 830, totalX: 415
