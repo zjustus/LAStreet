@@ -12,15 +12,18 @@ function Scatter(){
     //Points that will be selected 
     let selectedPoints = [];
 
-    //Replace this section with the data from UCLA
-    for (let i = 0; i < 10; i++) {
-        const x = Math.floor(Math.random() * 20) + 1;
-        const y = Math.floor(Math.random() * 20) + 1;
-        console.log(x + " " + y);
+    //Replace this section with the data from UCLA Currently returns random points from 0 to 1 just like Condition and Importance
+    for (let i = 0; i < 50; i++) {
+        const x = Math.random();
+        const y = Math.random();
+        // console.log(x + " " + y);
         dataExample.push([x, y]);
         
     }
 
+    //Ensures all data points are in order so that when it comes to find out which point is the closest to the clicked point this can be done more easily
+    dataExample.sort();
+    console.log('Before Conversion: ' + dataExample[0]);
 
     //Characteristics of the graph
     const pointColor = 'blue'
@@ -64,10 +67,9 @@ function Scatter(){
             .call(zoom_function.transform, t)
     });
 
-    //Used to manipulate what is displayed on the scatterplot
     const context = canvasChart.node().getContext('2d');
 
-    // Init Scales (.domain places the values from our data points on the plot)
+    // Initialize Scales (.domain places the values from our data points on the plot)
     const x = d3.scaleLinear().domain([0, d3.max(dataExample, (d) => d[0])]).range([0, width]).nice();
 
     //For the y axis the height and zero change because when using canvas the origin is on the top left rather than the bottom
@@ -75,7 +77,7 @@ function Scatter(){
 
 
 
-    // Init Axis
+    // Initialize Axis
     const xAxis = d3.axisBottom(x);
     const yAxis = d3.axisLeft(y);
 
@@ -100,22 +102,18 @@ function Scatter(){
 
 
     //Detects when user inputs a mouse click 
-    canvasChart.on('click', () => {
-        const mouseX = d3.event.offsetX - margin.left;
-        const mouseY = d3.event.offsetY - margin.top;
+    canvasChart.on('click', event => {
+        const mouseX = d3.event.offsetX;
+        const mouseY = d3.event.offsetY;
 
         //Reverts pixels back to original position AKA untransformed
-        const untransformedX = Math.round(x.invert(mouseX) + 2); //Plus 2 is added because x is off by two points for some reason
-        const untransformedY = Math.round(y.invert(mouseY) - 1);
+        const untransformedX = x.invert(mouseX); 
+        const untransformedY = y.invert(mouseY);
 
-        // console.log(d3.mouse(container.node()));
         console.log("X: " + untransformedX + " Y: " + untransformedY);
 
-        //Uses find() to search the data example array, then it checks the first and second element of each value in the array.
-        //If both are equal the corresponding data point will bre returned. Current issue is that values in the arrays are whole
-        // And when you click a point it is a float; therefore, we must return the closest point to the area selected
-        //You guys may want to figure out how to select a point based on the circle created of it as opposed to distance 
-        //from the point's position. And of course make the point appear on its exact location rather than a rounded number
+        // getInBetweenValues(untransformedX, untransformedY);
+
         const point = dataExample.find(d => d[0] === untransformedX && d[1] === untransformedY); //Currently returns undefined
 
         //Checks to see if selected point is also in the original array
@@ -139,6 +137,31 @@ function Scatter(){
     });
 
 
+    //Gets the values between selected points may need to set 0 to smaller points
+    function getInBetweenValues(x0, y0, x1, y1) {
+
+        console.log('Checking values between x0: ' + x0 + ' y0: ' + y0 + ' x1: '+ x1 + ' y1: ' + y1);
+        let highlightedPoints = [];
+        for(let i = 0; i < dataExample.length; i++){
+            console.log(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1));
+
+
+            console.log(y0 + ' is greater than or equal to ' + dataExample[i][1] + ' which is greater than ' + y1);
+            // console.log(y0 >= dataExample[i][1] >= y1);
+
+            if(((x0 <= dataExample[i][0]) && (dataExample[i][0] <= x1)) && (y0 >= dataExample[i][1])&&(dataExample[i][1] >= y1)){
+                console.log(dataExample[i] + ' FUCK YEAH');
+                highlightedPoints.push(dataExample[i]);
+            }
+            
+        }
+
+        for(let i = 0; i < highlightedPoints.length; i++){
+            console.log('Selected: ' + highlightedPoints[i] );
+        }
+
+        return highlightedPoints;
+    }
 
 
 
@@ -147,7 +170,6 @@ function Scatter(){
     function draw(transform) {
 
         lastTransform = transform;
-
         const scaleX = transform.rescaleX(x);
         const scaleY = transform.rescaleY(y);
         gxAxis.call(xAxis.scale(scaleX));
@@ -180,6 +202,10 @@ function Scatter(){
 
     }
 
+    function updatePoints(){
+
+    }
+
     // Zoom/Drag handler
     const zoom_function = d3.zoom().scaleExtent([1, 1000])
         .on('zoom', () => {
@@ -200,6 +226,8 @@ function Scatter(){
         svgChartParent.style('z-index', 0);
     });
 
+
+    //Brush Feature
     const brushButton = toolsList.select('#brush').on('click', () => {
         toolsList.selectAll('.active').classed('active', false);
         brushButton.classed('active', true);
@@ -207,6 +235,7 @@ function Scatter(){
         svgChartParent.style('z-index', 1);
     });
 
+    //Start
     const brush = d3.brush().extent([[0, 0], [width, height]])
         .on("start", () => { brush_startEvent(); })
         .on("brush", () => { brush_brushEvent(); })
@@ -299,7 +328,9 @@ function Scatter(){
             const minY = Math.min(brushStartPoint.y, yPosition);
             const maxY = Math.max(brushStartPoint.y, yPosition);
 
-            console.log(minX, maxX, minY, maxY);
+            // console.log('Minimum X: ' + x.invert(minX) + ' Maximum X: ' + x.invert(maxX) + ' Minimum Y: '+   y.invert(minY) + ' Maximum Y: '  + y.invert(maxY));
+
+            // console.log(getInBetweenValues(x.invert(minX),y.invert(minY),x.invert(maxX),y.invert(maxY)));
 
             lastSelection = { x1: minX, x2: maxX, y1: minY, y2: maxY };
         }
@@ -312,12 +343,15 @@ function Scatter(){
             // Re-scale axis for the last transformation
             let zx = lastTransform.rescaleX(x);
             let zy = lastTransform.rescaleY(y);
-
+            
             // Calc distance on Axis-X to use in scale
             let totalX = Math.abs(lastSelection.x2 - lastSelection.x1);
 
             // Get current point [x,y] on canvas
             const originalPoint = [zx.invert(lastSelection.x1), zy.invert(lastSelection.y1)];
+            console.log(lastSelection);
+            console.log(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
+
             // Calc scale mapping distance AxisX in width * k
             // Example: Scale 1, width: 830, totalX: 415
             // Result in a zoom of 2
@@ -330,15 +364,15 @@ function Scatter(){
             // To calculate the brush position we use the originalPoint in the new Axis Scale.
             // originalPoint it's always positive (because we're sure it's within the canvas).
             // We need to translate this originalPoint to [0,0]. So, we do (0 - position) or (position * -1)
-            canvasChart
-                .transition()
-                .duration(200)
-                .ease(d3.easeLinear)
-                .call(zoom_function.transform,
-                    d3.zoomIdentity
-                        .translate(zx(originalPoint[0]) * -1, zy(originalPoint[1]) * -1)
-                        .scale(t.k));
-            lastSelection = null;
+            // canvasChart
+            //     .transition()
+            //     .duration(200)
+            //     .ease(d3.easeLinear)
+            //     .call(zoom_function.transform,
+            //         d3.zoomIdentity
+            //             .translate(zx(originalPoint[0]) * -1, zy(originalPoint[1]) * -1)
+            //             .scale(t.k));
+            // lastSelection = null;
         } else {
             brushSvg.call(brush.move, null);
         }
