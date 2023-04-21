@@ -3,6 +3,7 @@ import { useState } from "react";
 import './application.css'
 import Filters from '../filters'
 import ScatterPlot from '../scatterPlot';
+import FilterSearchAPI from '../filtersearch'
 // import Navbar from '../navbar';
 // import Chart from './chart';
 // import { Button } from '../button';
@@ -37,6 +38,7 @@ function Application () {
                 {/* Street Graph Goes Here */}
             </div>
             <div className='map'>
+                <FilterSearchAPI geoData={null}/>
                 <div id="leafletTooltip"></div>
                 {/* <Map/> */}
                 {/* <RenderMapillary/> */}
