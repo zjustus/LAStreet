@@ -135,29 +135,37 @@ function Scatter(){
     draw(d3.zoomIdentity)
 
     function drawPoint(scaleX, scaleY, point, k) {
+        // context.beginPath();
+        // context.fillStyle = selectedPoints.some(d => d[0] === point[0] && d[1] === point[1]) ? 'red' : pointColor;
+        // const px = scaleX(point[0]);
+        // const py = scaleY(point[1]);
+
+        // context.arc(px, py, 1.2 * k, 0, 2 * Math.PI, true);
+        // context.fill();
         context.beginPath();
         context.fillStyle = selectedPoints.some(d => d[0] === point[0] && d[1] === point[1]) ? 'red' : pointColor;
-        const px = scaleX(point[0]);
-        const py = scaleY(point[1]);
-
-        context.arc(px, py, 1.2 * k, 0, 2 * Math.PI, true);
+        const r = k * 3;
+        context.arc(scaleX(point[0]), scaleY(point[1]), r, 0, 2 * Math.PI, false);
         context.fill();
         
-
     }
 
     function updatePoints(colorPoints){
         // colorPoints
         //Checks to see if selected point is also in the original array
-
+        let index;
         colorPoints.forEach(point => {
-            if(selectedPoints.indexOf(point) === -1)selectedPoints.push(point);
-            // selectedPoints.splice(point, 1); 
+            index = selectedPoints.indexOf(point);
+            if(index === -1) {
+                selectedPoints.push(point);
+              } else if(index !== -1) {
+                //removes points that have already been highlighted
+                selectedPoints.splice(index, 1); 
+              }            
             // selectedPoints.push(point);
         });
-        console.log(selectedPoints);
         draw(lastTransform);
-        // }
+        
     }
 
     // Zoom/Drag handler
@@ -308,7 +316,6 @@ function Scatter(){
             console.log(lastSelection);
              
             updatePoints(getInBetweenValues(x.invert(lastSelection.x1),y.invert(lastSelection.y1),x.invert(lastSelection.x2),y.invert(lastSelection.y2)));
-
             // Calc scale mapping distance AxisX in width * k
             const t = d3.zoomIdentity.scale(((width * lastTransform.k) / totalX));
             // Re-scale axis for the new transformation
