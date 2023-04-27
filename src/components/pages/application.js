@@ -10,24 +10,38 @@ import Update from './updateMapillary';
 import CityMap from './cityMap';
 import Scatter from './scatter';
 
+import Filters from '../filters'
+// import Navbar from '../navbar';
+// import Chart from './chart';
+// import { Button } from '../button';
+// import Map from './map';
+// import StreetMap from './streetmap';
+// import RenderMapillary from './mapillary';
+// import Update from './updateMapillary';
 
 function Application () {
+
+    function updateDrawing(geoJson){
+        console.log("Hello World")
+        console.log(geoJson);
+    }
+
+
     return (
         <div className='application'>
             <div className='intro'>
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
-            <div className='charts'>
-                <div className='chart'>
-                    {/* <Chart/> */}
-                    <Scatter/>
-                </div>
+            <Filters callBack={updateDrawing}/> 
+            <div className="data-selection">
+                {/* Plot Graph Goes Here */}
+                {/* Street Graph Goes Here */}
             </div>
             <div className='map'>
                 <div id="leafletTooltip"></div>
-                
+                {/* <Map/> */}
                 {/* <RenderMapillary/> */}
-                <Update/>
+                {/* <Update/> */}
             </div>
         </div>
     );

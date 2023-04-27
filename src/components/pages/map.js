@@ -1,7 +1,7 @@
 import './map.css';
-import {useState, useRef, useEffect} from 'react';
+// import {useState, useRef, useEffect} from 'react';
 import * as d3 from 'd3';
-import chart from './chart';
+// import chart from './chart';
 
 import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';

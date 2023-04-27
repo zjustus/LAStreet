@@ -1,15 +1,15 @@
 import './chart.css';
-// import React, {useState, useRef, useEffect} from 'react';
-// import * as d3 from 'd3';
-// import * as d3Slider from 'd3-simple-slider';
-// import Select, {components} from "react-select";
-// import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-// import 'leaflet/dist/leaflet.css';
-// import L from 'leaflet';
-// import * as d3Geo from "d3-geo";
-// import './streetmap.css';
-// import { brush, sum, svg } from 'd3';
-// import { type } from '@testing-library/user-event/dist/type';
+import React, {useState, useRef, useEffect} from 'react';
+import * as d3 from 'd3';
+import * as d3Slider from 'd3-simple-slider';
+import Select, {components} from "react-select";
+import { LayerGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import * as d3Geo from "d3-geo";
+import './streetmap.css';
+import { brush, sum, svg } from 'd3';
+import { type } from '@testing-library/user-event/dist/type';
 // import { Dropdown } from './dropdown';
 
 function Chart() {
@@ -44,7 +44,7 @@ function Chart() {
             //maybe here
             .call(zoom.transform, d3.zoomIdentity.scale(1));
         });
-        
+
         var w = 500; //CHANGE mapW and mapH in chart.js if you change this
         var h = 600;
 
@@ -1497,8 +1497,8 @@ function Chart() {
 
     var arrCoordinates = [
         [-118.4452, 34.0689],
-        [-118.4, 34.06],
-        [-118.3, 34.06]
+        [-118.3, 34.06],
+        [-118.4, 34.06]
     ];
 
     
@@ -1579,4 +1579,6 @@ function Chart() {
     );
 
 }
+
+
 export default Chart;
