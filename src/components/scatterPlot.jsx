@@ -5,70 +5,48 @@
  */
 
 import { useRef, useEffect, useState } from "react";
+import * as d3 from 'd3';
 
 
-export default function ScatterPlot({geoData}){
-    const canvasRef = useRef();
-    // const [selectedPoints, setSelectedPoints] = useState([]);
-    
-    //Update these later?
-    const props = {
-        width:100,
-        height:100,
-        maxX:10,
-        minX:9,
-        maxY:10,
-        minY:9
-    }
+export default function ScatterPlot({geoData, width, height}){
+    const canvasRef = useRef(null);
 
     useEffect(() =>{
+        const context = canvasRef.current.getContext('2d');
 
-        const canvas = canvasRef.current;
-        if(!canvas) return; // die if canvas is null
+        // The Scales
+        const xScale = d3.scaleLinear()
+            .domain(d3.extent(geoData, d => d.x))
+            .range([0, width]);
+        const yScale = d3.scaleLinear()
+            .domain(d3.extent(geoData, d => d.y))
+            .range([height, 0]);
 
-        const ctx = canvas.getContext('2d');
-
-        const xScale = props.width / (props.maxX - props.minX);
-        const yScale = props.height / (props.maxY - props.minY);
-
-        ctx.beginPath();
-        ctx.moveTo(0, props.height);
-        ctx.lineTo(props.width, props.height);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, props.height);
-        ctx.stroke();
-
-        // Draw your data points
-        ctx.fillStyle = 'blue';
+        context.fillStyle = 'blue';
         geoData.forEach(d => {
-            const x = (d.properties.condition - props.minX) * xScale;
-            const y = props.height - ((d.properties.importance - props.minY) * yScale);
-            ctx.beginPath();
-            ctx.arc(x, y, 5, 0, 2 * Math.PI);
-            ctx.fill();
-        });  
-    }, [geoData, props.height, props.maxX, props.maxY, props.minX, props.minY, props.width]);
+        context.beginPath();
+        context.arc(xScale(d.x), yScale(d.y), 5, 0, Math.PI * 2);
+        context.fill();
+        });
 
-    // Event listener for selecting points
-    // function handleMouseDown(event) {
-    //     const x = event.clientX - canvas.offsetLeft;
-    //     const y = event.clientY - canvas.offsetTop;
+        context.font = '16px sans-serif';
+        context.textAlign = 'center';
+        context.fillText('X Axis Label', width / 2, height - 10);
 
-    //     const clickedPoints = props.data.filter(d => {
-    //       const pointX = (d.x - props.minX) * xScale;
-    //       const pointY = props.height - ((d.y - props.minY) * yScale);
-    //       const distance = Math.sqrt(Math.pow(pointX - x, 2) + Math.pow(pointY - y, 2));
-    //       return distance <= 5;
-    //     });
+        context.save();
+        context.translate(20, height / 2);
+        context.rotate(-Math.PI / 2);
+        context.textAlign = 'center';
+        context.fillText('Y Axis Label', 0, 0);
+        context.restore();
 
-    //     setSelectedPoints(clickedPoints);
-    // }
-    // canvas.addEventListener('mousedown', handleMouseDown);
+        context.font = '20px sans-serif';
+        context.textAlign = 'center';
+        context.fillText('Scatter Plot Title', width / 2, 30);
+            
+    }, [geoData, width, height])
 
     return (
-        <canvas ref={canvasRef} width={props.width} height={props.height}></canvas>
+        <canvas ref={canvasRef} width={width} height={height}></canvas>
       );
 }

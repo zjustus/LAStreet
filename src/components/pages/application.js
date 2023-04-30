@@ -16,7 +16,11 @@ function Application () {
 
     function updateGeoData(geoDataNew){
         console.log(geoDataNew);
-        setGeoData(geoDataNew)
+        const data = geoDataNew.map(d => {
+            return {'x': d['importance'], 'y': d['condition']}
+        })
+        console.log(data)
+        setGeoData(data)
     }
 
     
@@ -28,7 +32,7 @@ function Application () {
             </div>
             <Filters callBack={updateGeoData}/> 
             <div className="data-selection">
-                <ScatterPlot geoData={geoData} />
+                <ScatterPlot geoData={geoData} width={300} height={300} />
                 {/* Plot Graph Goes Here */}
                 {/* Street Graph Goes Here */}
             </div>
