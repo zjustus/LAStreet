@@ -1,5 +1,5 @@
 // import React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './application.css'
 import Filters from '../filters'
 import ScatterPlot from '../scatterPlot';
@@ -15,12 +15,12 @@ function Application () {
     const [geoData, setGeoData] = useState([]);
 
     function updateGeoData(geoDataNew){
-        console.log(geoDataNew);
-        const data = geoDataNew.map(d => {
-            return {'x': d['importance'], 'y': d['condition']}
-        })
-        console.log(data)
-        setGeoData(data)
+        console.debug(geoDataNew);
+        setGeoData(geoDataNew)
+    }
+
+    function updateGeoSelection(geoSelection){
+        console.debug(geoSelection)
     }
 
     
@@ -32,7 +32,7 @@ function Application () {
             </div>
             <Filters callBack={updateGeoData}/> 
             <div className="data-selection">
-                <ScatterPlot geoData={geoData} width={300} height={300} />
+                <ScatterPlot geoData={geoData} callback={updateGeoSelection} width={500} height={500} />
                 {/* Plot Graph Goes Here */}
                 {/* Street Graph Goes Here */}
             </div>
