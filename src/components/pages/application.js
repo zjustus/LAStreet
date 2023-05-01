@@ -48,7 +48,7 @@ function Application () {
             </div>
             <div className='map'>
                 {/* <Map geoData={selectedData}/> */}
-                {selectedData.length ? <Map geoData={selectedData} callback={updateSelectedCords}/> : <p>Loading data...</p>}
+                <Map geoData={selectedData} callback={updateSelectedCords}/>
                 {/* <FilterSearchAPI geoData={selectedData}/> */}
                 <div id="leafletTooltip"></div>
                 {/* <RenderMapillary/> */}
