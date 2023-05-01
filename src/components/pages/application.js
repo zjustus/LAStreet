@@ -3,11 +3,11 @@ import { useState } from "react";
 import './application.css'
 import Filters from '../filters'
 import ScatterPlot from '../scatterPlot';
-import FilterSearchAPI from '../filtersearch'
+// import FilterSearchAPI from '../filtersearch'
 // import Navbar from '../navbar';
 // import Chart from './chart';
 // import { Button } from '../button';
-// import Map from './map';
+import Map from './map';
 // import StreetMap from './streetmap';
 // import RenderMapillary from './mapillary';
 // import Update from './updateMapillary';
@@ -40,9 +40,10 @@ function Application () {
                 {/* Street Graph Goes Here */}
             </div>
             <div className='map'>
-                <FilterSearchAPI geoData={selectedData}/>
+                {/* <Map geoData={selectedData}/> */}
+                {selectedData.length ? <Map geoData={selectedData}/> : <p>Loading data...</p>}
+                {/* <FilterSearchAPI geoData={selectedData}/> */}
                 <div id="leafletTooltip"></div>
-                {/* <Map/> */}
                 {/* <RenderMapillary/> */}
                 {/* <Update/> */}
             </div>

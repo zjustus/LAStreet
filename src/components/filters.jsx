@@ -14,7 +14,8 @@ export default function Filters({callBack}){
     const [filters, setFilters] = useState({});
     // Get Filters from API
     useEffect(() =>{
-        fetch("http://192.168.56.5:3001/filters")
+        // fetch("http://192.168.56.5:3001/filters")
+        fetch("http://localhost:3001/filters")
         .then((response) => response.json())
         .then(
             (result) =>{
@@ -69,7 +70,8 @@ export default function Filters({callBack}){
         const urlParams = new URLSearchParams(filterValues);
 
         // Get the GeoJson Data
-        fetch(`http://192.168.56.5:3001/filteredData?${urlParams}`)
+        // fetch(`http://192.168.56.5:3001/filteredData?${urlParams}`)
+        fetch(`http://localhost:3001/filteredData?${urlParams}`)
         .then((response) => response.json())
         .then(result =>{
             callBack(result)
