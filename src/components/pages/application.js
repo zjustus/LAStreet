@@ -14,8 +14,10 @@ import Map from './map';
 
 function Application () {
     const [geoData, setGeoData] = useState([]);
-    const [selectedData, setSelectedData] = useState([])
+    const [selectedData, setSelectedData] = useState([]);
+    const [selectedCords, setSelectedCords] = useState([]);
 
+    // These are dubug functions, in final production bypass and skip strait to the sets
     function updateGeoData(geoDataNew){
         console.debug(geoDataNew);
         setGeoData(geoDataNew)
@@ -24,6 +26,11 @@ function Application () {
     function updateGeoSelection(geoSelection){
         console.debug(geoSelection)
         setSelectedData(geoSelection)
+    }
+
+    function updateSelectedCords(cords){
+        console.log(cords)
+        setSelectedCords(cords)
     }
 
     
@@ -41,7 +48,7 @@ function Application () {
             </div>
             <div className='map'>
                 {/* <Map geoData={selectedData}/> */}
-                {selectedData.length ? <Map geoData={selectedData}/> : <p>Loading data...</p>}
+                {selectedData.length ? <Map geoData={selectedData} callback={updateSelectedCords}/> : <p>Loading data...</p>}
                 {/* <FilterSearchAPI geoData={selectedData}/> */}
                 <div id="leafletTooltip"></div>
                 {/* <RenderMapillary/> */}

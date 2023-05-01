@@ -7,12 +7,13 @@ import React from 'react';
 import { MapContainer, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-function Map ({geoData = []}) {
+function Map ({geoData = [], callback}) {
 
     const position = [34.03, -118.26];
     // const center = [-41.2858, 174.7868];
+    
+    // put the list of features into the standard format
     const geoJsonLayer = useRef(null);
-
     const geoJSONData = {
         "type": "FeatureCollection",
         "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
@@ -28,7 +29,15 @@ function Map ({geoData = []}) {
         }
     }, [geoData]);
 
-    // put the list of features into the standard format
+    const onEachFeature = (feature, layer) => {
+        layer.on({
+            click: (e) => {
+                callback([e.latlng.lat, e.latlng.lng])
+                console.log("Clicked on feature with coordinates:", e.latlng);
+            }
+        });
+    }
+
     
     
     // console.log(geoJSONData)
@@ -40,7 +49,7 @@ function Map ({geoData = []}) {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <GeoJSON ref={geoJsonLayer} data={geoJSONData}/>
+                <GeoJSON ref={geoJsonLayer} data={geoJSONData} onEachFeature={onEachFeature}/>
                 {/* {markers} */}
                 {/* <MultipleMarkers /> */}
             </MapContainer>
