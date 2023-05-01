@@ -11,6 +11,7 @@ import Map from './map';
 // import StreetMap from './streetmap';
 import RenderMapillary from './mapillary';
 import Update from './updateMapillary';
+import DownloadButton from "../downloadButton";
 
 function Application () {
     const [geoData, setGeoData] = useState([]);
@@ -42,6 +43,13 @@ function Application () {
             </div>
             <Filters callBack={updateGeoData}/> 
             <ScatterPlot geoData={geoData} callback={updateGeoSelection} width={500} height={500} />
+
+            <DownloadButton buttonText="Download Data" jsonData={{
+                "type": "FeatureCollection",
+                "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+                "features": selectedData
+            }} />
+
             <Map geoData={selectedData} callback={updateSelectedCords}/>
             {/* <RenderMapillary /> */}
             <Update />
