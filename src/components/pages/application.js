@@ -41,19 +41,8 @@ function Application () {
                 <h1>Hillside Street Prioritization Application</h1>
             </div>
             <Filters callBack={updateGeoData}/> 
-            <div className="data-selection">
-                <ScatterPlot geoData={geoData} callback={updateGeoSelection} width={500} height={500} />
-                {/* Plot Graph Goes Here */}
-                {/* Street Graph Goes Here */}
-            </div>
-            <div className='map'>
-                {/* <Map geoData={selectedData}/> */}
-                <Map geoData={selectedData} callback={updateSelectedCords}/>
-                {/* <FilterSearchAPI geoData={selectedData}/> */}
-                <div id="leafletTooltip"></div>
-                {/* <RenderMapillary/> */}
-                {/* <Update/> */}
-            </div>
+            <ScatterPlot geoData={geoData} callback={updateGeoSelection} width={500} height={500} />
+            <Map geoData={selectedData} callback={updateSelectedCords}/>
         </div>
     );
 }
