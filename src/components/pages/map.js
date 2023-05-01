@@ -1,6 +1,14 @@
+/**
+ * Map Display,
+ * This React component will display a map on the screen
+ * given geoJSON coordinates it will add them to the map
+ * when selecting a coordinate it will call the callback function and pass the selected coordinates in an array [longitude, latitude] 
+ * 
+ * TODO: Add in a tool tip to show what street is selected. 
+ */
+
 import './map.css';
 import {useEffect, useRef} from 'react';
-// import * as d3 from 'd3';
 
 // import chart from './chart';
 import React from 'react';
@@ -29,6 +37,7 @@ function Map ({geoData = [], callback}) {
         }
     }, [geoData]);
 
+    // Returns selected components
     const onEachFeature = (feature, layer) => {
         layer.on({
             click: (e) => {
@@ -38,20 +47,13 @@ function Map ({geoData = [], callback}) {
         });
     }
 
-    
-    
-    // console.log(geoJSONData)
-
     return (
             <MapContainer center={position} zoom={10} style={{ height: "700px", width: "40%" }}>
-                {/* <MyMap/> */}
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <GeoJSON ref={geoJsonLayer} data={geoJSONData} onEachFeature={onEachFeature}/>
-                {/* {markers} */}
-                {/* <MultipleMarkers /> */}
             </MapContainer>
     );
 }
