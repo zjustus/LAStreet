@@ -29,8 +29,8 @@ function Application () {
     }
 
     function updateSelectedCords(cords){
-        console.log(cords)
         setSelectedCords(cords)
+        console.log(selectedCords)
     }
 
     
