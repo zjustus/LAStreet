@@ -9,8 +9,8 @@ import ScatterPlot from '../scatterPlot';
 // import { Button } from '../button';
 import Map from './map';
 // import StreetMap from './streetmap';
-// import RenderMapillary from './mapillary';
-// import Update from './updateMapillary';
+import RenderMapillary from './mapillary';
+import Update from './updateMapillary';
 
 function Application () {
     const [geoData, setGeoData] = useState([]);
@@ -43,6 +43,8 @@ function Application () {
             <Filters callBack={updateGeoData}/> 
             <ScatterPlot geoData={geoData} callback={updateGeoSelection} width={500} height={500} />
             <Map geoData={selectedData} callback={updateSelectedCords}/>
+            {/* <RenderMapillary /> */}
+            <Update />
         </div>
     );
 }
