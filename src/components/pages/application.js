@@ -14,6 +14,7 @@ import FilterSearchAPI from '../filtersearch'
 
 function Application () {
     const [geoData, setGeoData] = useState([]);
+    const [selectedData, setSelectedData] = useState([])
 
     function updateGeoData(geoDataNew){
         console.debug(geoDataNew);
@@ -22,6 +23,7 @@ function Application () {
 
     function updateGeoSelection(geoSelection){
         console.debug(geoSelection)
+        setSelectedData(geoSelection)
     }
 
     
@@ -38,7 +40,7 @@ function Application () {
                 {/* Street Graph Goes Here */}
             </div>
             <div className='map'>
-                <FilterSearchAPI geoData={null}/>
+                <FilterSearchAPI geoData={selectedData}/>
                 <div id="leafletTooltip"></div>
                 {/* <Map/> */}
                 {/* <RenderMapillary/> */}
